@@ -1,17 +1,228 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="modern-header">
   <ion-toolbar>
     <ion-title>
-      Tab 1
+      <div class="title-content">
+        <ion-icon name="leaf"></ion-icon>
+        <span>Nông Sản Đà Lạt</span>
+      </div>
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openQRScanner()" class="qr-button" aria-label="Mở quét mã QR">
+        <ion-icon name="qr-code-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="goToCart()" class="cart-button" aria-label="Mở giỏ hàng">
+        <ion-icon name="cart" slot="icon-only"></ion-icon>
+        <ion-badge color="danger" *ngIf="cartItemCount > 0" class="cart-badge">{{ cartItemCount }}</ion-badge>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
+      <ion-title size="large">Nông Sản Đà Lạt</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <div class="app-shell">
+  <!-- Modern Banner -->
+  <div class="banner-section">
+    <img src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=1200&h=400&fit=crop" alt="Nông sản Đà Lạt" class="banner-image" />
+    <div class="banner-overlay">
+      <div class="banner-content">
+        <h1 class="banner-title">🌱 Nông Sản Đà Lạt</h1>
+        <p class="banner-subtitle">Đặc sản sạch - Nguồn gốc rõ ràng</p>
+        <div class="banner-badges">
+          <span class="quality-badge">✓ Chất lượng cao</span>
+          <span class="quality-badge">✓ 100% Tươi sạch</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sản phẩm nổi bật -->
+  <div class="featured-section slide-up">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="star"></ion-icon>
+        SẢN PHẨM NỔI BẬT
+      </h2>
+    </div>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" size-md="6" size-lg="6" *ngFor="let product of featuredProducts">
+          <div class="featured-card card-hover" (click)="viewProductDetail(product)">
+            <div class="featured-image-wrapper">
+              <img [src]="product.image" alt="{{ product.name }}" title="{{ product.name }}" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';" />
+              <div class="stock-indicator" [ngClass]="{'low-stock': product.stock <= 10, 'out-of-stock': product.stock <= 0}">
+                <ion-icon [name]="product.stock <= 0 ? 'close-circle' : product.stock <= 10 ? 'warning' : 'checkmark-circle'"></ion-icon>
+                <span>{{ product.stock <= 0 ? 'Hết' : product.stock <= 10 ? 'Còn ' + product.stock : 'Còn hàng' }}</span>
+              </div>
+              <div class="image-overlay">
+                <ion-icon name="eye"></ion-icon>
+                <span>Xem chi tiết</span>
+              </div>
+            </div>
+            <p class="featured-name">{{ product.name }}</p>
+            <div class="featured-price">{{ product.price | number:'1.0-0' }}đ</div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Tìm kiếm -->
+  <div class="search-container modern-search">
+    <ion-searchbar 
+      [(ngModel)]="searchTerm" 
+      (ionInput)="onSearchInput()" 
+      placeholder="Tìm kiếm sản phẩm..."
+      animated="true"
+      search-icon="search"
+      class="custom-searchbar">
+    </ion-searchbar>
+    
+    <!-- Search Suggestions -->
+    <div class="search-suggestions fade-in" *ngIf="showSuggestions">
+      <ion-list>
+        <ion-item *ngFor="let suggestion of searchSuggestions" button (click)="selectSuggestion(suggestion)" lines="none">
+          <ion-icon name="search" slot="start"></ion-icon>
+          <ion-label>{{ suggestion }}</ion-label>
+          <ion-icon name="arrow-forward" slot="end" class="suggestion-arrow"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+  <!-- Sản phẩm yêu thích -->
+  <div class="favorites-section slide-up" *ngIf="favoriteProducts.length > 0">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="heart"></ion-icon>
+        SẢN PHẨM YÊU THÍCH
+      </h2>
+    </div>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6" size-md="6" size-lg="6" *ngFor="let product of favoriteProducts">
+          <div class="featured-card card-hover" (click)="viewProductDetail(product)">
+            <div class="featured-image-wrapper">
+              <img [src]="product.image" alt="{{ product.name }}" title="{{ product.name }}" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';" />
+              <div class="favorite-badge-overlay">
+                <ion-icon name="heart"></ion-icon>
+              </div>
+            </div>
+            <p class="featured-name">{{ product.name }}</p>
+            <div class="featured-price">{{ product.price | number:'1.0-0' }}đ</div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Bộ lọc danh mục -->
+  <div class="category-filter">
+    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="filterProducts()" scrollable="true" mode="md" class="modern-segment">
+      <ion-segment-button value="all">
+        <ion-label>
+          <ion-icon name="apps"></ion-icon>
+          Tất cả
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button *ngFor="let category of categories" [value]="category">
+        <ion-label>{{ category }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Danh sách sản phẩm -->
+  <ion-grid class="products-grid">
+    <ion-row>
+      <ion-col size="6" size-md="6" size-lg="6" *ngFor="let product of filteredProducts">
+        <ion-card class="product-card modern-card" (click)="viewProductDetail(product)">
+          <div class="image-container">
+            <img [src]="product.image" alt="{{ product.name }}" title="{{ product.name }}" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';" />
+            <div class="stock-badge-wrapper">
+              <ion-badge class="stock-badge" [color]="getStockColor(product.stock)">
+                <ion-icon [name]="getStockIcon(product.stock)"></ion-icon>
+                {{ getStockStatus(product.stock) }}
+              </ion-badge>
+            </div>
+            <div class="out-of-stock-overlay" *ngIf="product.stock <= 0">
+              <div class="out-of-stock-label">
+                <ion-icon name="close-circle"></ion-icon>
+                <span>Hết hàng</span>
+              </div>
+            </div>
+            <div class="quick-view-overlay">
+              <ion-button fill="solid" size="small" class="quick-view-btn">
+                <ion-icon name="eye" slot="start"></ion-icon>
+                Xem nhanh
+              </ion-button>
+            </div>
+          </div>
+          <ion-card-header>
+            <ion-card-subtitle>
+              <ion-icon name="location"></ion-icon>
+              {{ product.origin }}
+            </ion-card-subtitle>
+            <ion-card-title>{{ product.name }}</ion-card-title>
+            <div class="rating" *ngIf="product.rating">
+              <div class="stars">
+                <ion-icon *ngFor="let star of getStarArray(product.rating)" 
+                          [name]="star ? 'star' : 'star-outline'"
+                          [color]="star ? 'warning' : 'medium'"></ion-icon>
+              </div>
+              <span class="rating-text">{{ product.rating }}</span>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="description">{{ product.description }}</p>
+            <div class="price-container">
+              <div class="price-info">
+                <h2 class="price">{{ product.price | number:'1.0-0' }}đ</h2>
+                <span class="unit">/{{ product.unit }}</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <ion-button 
+                expand="block" 
+                [color]="product.stock > 0 ? 'success' : 'medium'"
+                [disabled]="product.stock <= 0"
+                class="add-cart-btn"
+                [class.disabled-btn]="product.stock <= 0"
+                (click)="addToCart(product); $event.stopPropagation()">
+                <ion-icon [name]="product.stock > 0 ? 'cart' : 'close-circle'" slot="start"></ion-icon>
+                {{ product.stock > 0 ? 'Thêm vào giỏ' : '❌ Hết hàng' }}
+              </ion-button>
+              <ion-button 
+                expand="block" 
+                fill="outline"
+                color="success"
+                class="detail-btn"
+                (click)="viewProductDetail(product); $event.stopPropagation()">
+                <ion-icon name="information-circle" slot="start"></ion-icon>
+                Chi tiết
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Thông báo không có sản phẩm -->
+  <div class="empty-state fade-in" *ngIf="filteredProducts.length === 0">
+    <div class="empty-icon-wrapper">
+      <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+    </div>
+    <h3>Không tìm thấy sản phẩm</h3>
+    <p>Vui lòng thử từ khóa khác hoặc chọn danh mục khác</p>
+    <ion-button fill="outline" color="success" (click)="clearSearch()">
+      <ion-icon name="refresh" slot="start"></ion-icon>
+      Xem tất cả sản phẩm
+    </ion-button>
+  </div>
+  </div>
 </ion-content>

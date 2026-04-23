@@ -1,0 +1,187 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="time-outline"></ion-icon>
+      Lịch sử kho
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleAnalytics()" title="Thống kê">
+        <ion-icon name="bar-chart-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="exportCsv()">
+        <ion-icon name="download-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="page-shell">
+    <!-- Analytics Dashboard -->
+    <div *ngIf="showAnalytics" class="analytics-dashboard">
+      <ion-card>
+        <ion-card-header color="success">
+          <ion-card-title>
+            <ion-icon name="bar-chart"></ion-icon>
+            Thống Kê Biến Động Kho
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <!-- Summary Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">{{ totalMovements }}</div>
+              <div class="stat-label">Tổng Biến Động</div>
+              <ion-icon name="swap-vertical" color="success"></ion-icon>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">{{ totalQuantityIn }}</div>
+              <div class="stat-label">Nhập Vào</div>
+              <ion-icon name="arrow-up" color="success"></ion-icon>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">{{ totalQuantityOut }}</div>
+              <div class="stat-label">Xuất Ra</div>
+              <ion-icon name="arrow-down" color="danger"></ion-icon>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">{{ averageQuantityPerMovement | number:'1.0-0' }}</div>
+              <div class="stat-label">TB/Lần</div>
+              <ion-icon name="calculator" color="primary"></ion-icon>
+            </div>
+          </div>
+
+          <!-- Movement Type Stats -->
+          <div class="movement-stats" *ngIf="(movementTypeStats | keyvalue).length > 0">
+            <h3>Phân Bố Theo Loại</h3>
+            <ion-list>
+              <ion-item *ngFor="let stat of movementTypeStats | keyvalue">
+                <ion-label>
+                  <h3>{{ getMovementLabel(stat.key) }}</h3>
+                  <p>{{ stat.value }} lần</p>
+                </ion-label>
+                <ion-badge slot="end" color="primary">{{ stat.value }}</ion-badge>
+              </ion-item>
+            </ion-list>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Filter Card -->
+    <ion-card class="filter-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="filter-outline"></ion-icon>
+          Bộ lọc quản trị kho
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="block" color="success" fill="outline" (click)="goToStockManagement()">
+          <ion-icon name="construct-outline" slot="start"></ion-icon>
+          Mở form nhập/điều chỉnh kho
+        </ion-button>
+
+        <!-- Search bar -->
+        <ion-searchbar
+          [(ngModel)]="searchQuery"
+          (ionChange)="applyFilters()"
+          placeholder="Tìm sản phẩm..."
+          debounce="300">
+        </ion-searchbar>
+
+        <div class="filter-row">
+          <ion-item class="filter-item">
+            <ion-label position="stacked">Sản phẩm</ion-label>
+            <ion-select [(ngModel)]="selectedProductId" (ionChange)="applyFilters()">
+              <ion-select-option value="all">Tất cả sản phẩm</ion-select-option>
+              <ion-select-option *ngFor="let product of products" [value]="'' + product.id">{{ product.name }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item class="filter-item">
+            <ion-label position="stacked">Loại Biến Động</ion-label>
+            <ion-select [(ngModel)]="selectedMovementType" (ionChange)="applyFilters()">
+              <ion-select-option *ngFor="let type of movementTypes" [value]="type.value">{{ type.label }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <div class="filter-row">
+          <ion-item class="filter-item">
+            <ion-label position="stacked">Từ ngày</ion-label>
+            <ion-input type="date" [(ngModel)]="fromDate" (ionChange)="applyFilters()"></ion-input>
+          </ion-item>
+
+          <ion-item class="filter-item">
+            <ion-label position="stacked">Đến ngày</ion-label>
+            <ion-input type="date" [(ngModel)]="toDate" (ionChange)="applyFilters()"></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-segment [(ngModel)]="selectedSection" (ionChange)="applyFilters()">
+          <ion-segment-button value="all">
+            <ion-label>Tất cả</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="stock">
+            <ion-label>Tồn kho</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="trace">
+            <ion-label>Truy xuất</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <ion-button expand="block" fill="outline" class="reset-btn" (click)="resetFilters()">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Đặt lại bộ lọc
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="list-outline"></ion-icon>
+          Dữ liệu đã lọc
+          <ion-badge color="primary">{{ visibleRows.length }} / {{ filteredRows.length }}</ion-badge>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="empty-state" *ngIf="filteredRows.length === 0">
+          <ion-icon name="search-outline"></ion-icon>
+          <p>Không có dữ liệu phù hợp bộ lọc hiện tại.</p>
+        </div>
+
+        <ion-list *ngIf="filteredRows.length > 0">
+          <ion-item *ngFor="let row of visibleRows" lines="full">
+            <ion-icon
+              [name]="row.movementCreatedAt ? 'swap-vertical-outline' : 'git-network-outline'"
+              [color]="getRowColor(row)"
+              slot="start">
+            </ion-icon>
+            <ion-label>
+              <h2>{{ row.productName }}</h2>
+              <h3>{{ getRowTitle(row) }}</h3>
+              <p>{{ getRowDescription(row) }}</p>
+              <p>{{ getRowDate(row) }}</p>
+            </ion-label>
+            <ion-badge slot="end" color="medium">{{ row.currentStock }}</ion-badge>
+          </ion-item>
+        </ion-list>
+
+        <ion-button
+          *ngIf="canLoadMoreRows"
+          expand="block"
+          fill="outline"
+          color="success"
+          (click)="loadMoreRows()">
+          <ion-icon name="chevron-down-outline" slot="start"></ion-icon>
+          Xem thêm lịch sử
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

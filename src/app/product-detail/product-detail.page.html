@@ -1,0 +1,306 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="title-content">
+      <span class="title-text">Chi tiết sản phẩm</span>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleFavorite()" *ngIf="product" class="icon-button favorite-button">
+        <ion-icon [name]="isFavorite ? 'heart' : 'heart-outline'" class="favorite-icon" [class.is-favorite]="isFavorite"></ion-icon>
+      </ion-button>
+      <ion-button routerLink="/tabs/tab2" class="icon-button cart-button">
+        <ion-icon name="cart-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading Skeleton -->
+  <div *ngIf="isLoading" class="loading-skeleton">
+    <ion-skeleton-text animated class="skeleton-image"></ion-skeleton-text>
+    <div class="skeleton-content">
+      <ion-skeleton-text animated class="skeleton-title"></ion-skeleton-text>
+      <ion-skeleton-text animated class="skeleton-price"></ion-skeleton-text>
+      <ion-skeleton-text animated class="skeleton-description"></ion-skeleton-text>
+      <ion-skeleton-text animated class="skeleton-details"></ion-skeleton-text>
+    </div>
+  </div>
+
+  <!-- Product Content -->
+  <div *ngIf="!isLoading && product">
+  <!-- Product Image Section -->
+  <div class="product-image-section">
+    <div class="image-wrapper">
+      <img [src]="selectedImage" alt="{{ product.name }}" title="{{ product.name }}" class="main-image" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';">
+      <div class="image-overlay"></div>
+    </div>
+    <div class="badges-container">
+      <ion-badge class="stock-badge" [color]="getStockColor(product.stock)">
+        <ion-icon [name]="getStockIcon(product.stock)"></ion-icon>
+        {{ getStockText(product.stock) }}
+      </ion-badge>
+      <ion-badge class="certification-badge" *ngIf="product.certification && product.certification.length > 0">
+        <ion-icon name="shield-checkmark"></ion-icon>
+        {{ product.certification[0] }}
+      </ion-badge>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <!-- Product Header -->
+    <div class="product-header">
+      <div class="header-top">
+        <h1 class="product-name">{{ product.name }}</h1>
+        <ion-chip class="category-chip">
+          <ion-icon name="pricetag"></ion-icon>
+          <ion-label>{{ product.category }}</ion-label>
+        </ion-chip>
+      </div>
+      
+      <div class="rating-container">
+        <div class="stars">
+          <ion-icon 
+            *ngFor="let star of getStarArray(product.rating || 0)" 
+            [name]="star ? 'star' : 'star-outline'" 
+            class="star-icon"
+            [class.filled]="star">
+          </ion-icon>
+        </div>
+        <span class="rating-text">{{ product.rating || 0 }}/5</span>
+        <span class="rating-separator">•</span>
+        <span class="stock-text" [class.low-stock]="product.stock <= 10" [class.out-of-stock]="product.stock === 0">
+          <ion-icon [name]="product.stock <= 0 ? 'close-circle' : product.stock <= 10 ? 'warning' : 'checkmark-circle'"></ion-icon>
+          {{ product.stock === 0 ? 'Hết hàng' : product.stock + ' ' + product.unit + ' còn lại' }}
+        </span>
+      </div>
+      
+      <div class="price-container">
+        <div class="price-wrapper">
+          <span class="price-label">Giá bán</span>
+          <div class="price-row">
+            <span class="current-price">{{ product.price.toLocaleString('vi-VN') }}đ</span>
+            <span class="unit">/{{ product.unit }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="info-section description-section">
+      <div class="section-header">
+        <div class="header-icon-wrapper">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
+        <h2 class="section-title">Mô tả sản phẩm</h2>
+      </div>
+      <div class="info-card">
+        <p class="description-text">{{ product.description }}</p>
+      </div>
+    </div>
+
+    <!-- Traceability Information -->
+    <div class="info-section traceability-section">
+      <div class="section-header">
+        <div class="header-icon-wrapper gradient">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <h2 class="section-title">Truy xuất nguồn gốc</h2>
+      </div>
+      
+      <div class="info-card trace-card">
+        <div class="trace-grid">
+          <div class="trace-item">
+            <div class="trace-icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </div>
+            <div class="trace-content">
+              <div class="trace-label">Trang trại</div>
+              <div class="trace-value">{{ product.farmName || 'Dang cap nhat' }}</div>
+            </div>
+          </div>
+
+          <div class="trace-item">
+            <div class="trace-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <div class="trace-content">
+              <div class="trace-label">Ngày thu hoạch</div>
+              <div class="trace-value">{{ product.harvestDate || 'Dang cap nhat' }}</div>
+            </div>
+          </div>
+
+          <div class="trace-item">
+            <div class="trace-icon">
+              <ion-icon name="ribbon-outline"></ion-icon>
+            </div>
+            <div class="trace-content">
+              <div class="trace-label">Chứng nhận</div>
+              <div class="trace-value">{{ product.certification?.join(', ') || 'Dang cap nhat' }}</div>
+            </div>
+          </div>
+
+          <div class="trace-item">
+            <div class="trace-icon">
+              <ion-icon name="person-outline"></ion-icon>
+            </div>
+            <div class="trace-content">
+              <div class="trace-label">Người nông dân</div>
+              <div class="trace-value">{{ product.farmerInfo?.name || 'Dang cap nhat' }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <ion-button 
+          expand="block" 
+          fill="clear" 
+          class="view-detail-btn"
+          [routerLink]="['/product-origin', product.id]">
+          <ion-icon name="analytics-outline" slot="start"></ion-icon>
+          Xem chi tiết truy xuất nguồn gốc
+          <ion-icon name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Nutrition Information -->
+    <div class="info-section">
+      <div class="section-header">
+        <div class="header-icon-wrapper">
+          <ion-icon name="nutrition-outline"></ion-icon>
+        </div>
+        <h2 class="section-title">Thông tin dinh dưỡng</h2>
+      </div>
+      <div class="info-card nutrition-card">
+        <p class="nutrition-text">
+          {{ product.nutritionInfo?.calories || 'Dang cap nhat calo' }}
+          • Dam {{ product.nutritionInfo?.protein || 'N/A' }}
+          • Carb {{ product.nutritionInfo?.carbs || 'N/A' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Certifications -->
+    <div class="info-section certifications-section">
+      <div class="section-header">
+        <div class="header-icon-wrapper">
+          <ion-icon name="medal-outline"></ion-icon>
+        </div>
+        <h2 class="section-title">Chứng nhận chất lượng</h2>
+      </div>
+      <div class="certification-grid">
+        <div class="cert-badge" *ngFor="let cert of product.certification">
+          <div class="cert-icon">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <span class="cert-label">{{ cert }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Reviews -->
+    <div class="info-section review-section">
+      <div class="section-header">
+        <div class="header-icon-wrapper">
+          <ion-icon name="star-outline"></ion-icon>
+        </div>
+        <h2 class="section-title">Đánh giá từ khách hàng</h2>
+      </div>
+
+      <div class="info-card review-input-card">
+        <p class="review-helper">Bạn đã mua hàng? Hãy đánh giá chất lượng sản phẩm:</p>
+        <div class="interactive-stars">
+          <ion-icon
+            *ngFor="let star of [1,2,3,4,5]"
+            [name]="star <= selectedRating ? 'star' : 'star-outline'"
+            class="interactive-star"
+            [class.filled]="star <= selectedRating"
+            (click)="setSelectedRating(star)">
+          </ion-icon>
+        </div>
+        <ion-textarea
+          class="modern-textarea"
+          [(ngModel)]="reviewComment"
+          rows="3"
+          placeholder="Chia sẻ trải nghiệm của bạn (tùy chọn)">
+        </ion-textarea>
+        <ion-button expand="block" class="submit-review-btn" (click)="submitReview()" [disabled]="isSubmittingReview">
+          <ion-spinner *ngIf="isSubmittingReview" name="crescent"></ion-spinner>
+          <span *ngIf="!isSubmittingReview">Gửi đánh giá {{ selectedRating }} sao</span>
+        </ion-button>
+      </div>
+
+      <div class="info-card" *ngIf="reviews.length === 0">
+        <p class="description-text">Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này.</p>
+      </div>
+
+      <div class="info-card review-list-card" *ngIf="reviews.length > 0">
+        <div class="review-item" *ngFor="let review of reviews.slice(0, 5)">
+          <div class="review-header">
+            <div class="reviewer-name">{{ review.userName }}</div>
+            <div class="review-date">{{ formatReviewDate(review.createdAt) }}</div>
+          </div>
+          <div class="review-stars">
+            <ion-icon
+              *ngFor="let star of getStarArray(review.rating)"
+              [name]="star ? 'star' : 'star-outline'"
+              class="star-icon"
+              [class.filled]="star">
+            </ion-icon>
+          </div>
+          <p class="review-comment" *ngIf="review.comment">{{ review.comment }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Spacer -->
+  <div class="bottom-spacer"></div>
+  </div>
+</ion-content>
+
+<!-- Floating Add to Cart Bar -->
+<ion-footer class="cart-footer" *ngIf="!isLoading && product">
+  <div class="footer-content">
+    <div class="quantity-section">
+      <span class="quantity-label">Số lượng</span>
+      <div class="quantity-selector">
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          class="quantity-btn"
+          (click)="decreaseQuantity()"
+          [disabled]="quantity <= 1 || isAddingToCart">
+          <ion-icon name="remove"></ion-icon>
+        </ion-button>
+        <span class="quantity-value">{{ quantity }}</span>
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          class="quantity-btn"
+          (click)="increaseQuantity()"
+          [disabled]="!product || quantity >= product.stock || isAddingToCart">
+          <ion-icon name="add"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+    
+    <ion-button 
+      expand="block" 
+      class="add-to-cart-button"
+      [class.out-of-stock]="!product || product.stock === 0"
+      (click)="addToCart()"
+      [disabled]="!product || product.stock === 0 || isAddingToCart">
+      <ion-spinner name="crescent" *ngIf="isAddingToCart" class="button-spinner"></ion-spinner>
+      <ion-icon [name]="product && product.stock === 0 ? 'close-circle' : 'cart-outline'" slot="start" *ngIf="!isAddingToCart"></ion-icon>
+      <span class="button-text">
+        {{ isAddingToCart ? 'Đang thêm...' : (product && product.stock === 0 ? '❌ Hết hàng' : 'Thêm vào giỏ') }}
+      </span>
+      <span class="button-price" *ngIf="!isAddingToCart">{{ (product.price * quantity).toLocaleString('vi-VN') }}đ</span>
+    </ion-button>
+  </div>
+</ion-footer>

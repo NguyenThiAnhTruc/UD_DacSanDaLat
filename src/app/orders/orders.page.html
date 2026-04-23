@@ -1,0 +1,140 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3" class="back-button"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="title-content">
+      <span class="title-text">Lịch sử đơn hàng</span>
+    </ion-title>
+  </ion-toolbar>
+  
+  <!-- Modern Filter Tabs -->
+  <ion-toolbar class="filter-toolbar">
+    <div class="filter-container">
+      <ion-segment [(ngModel)]="selectedFilter" (ionChange)="applyFilter()" class="modern-segment">
+        <ion-segment-button value="all" class="segment-btn">
+          <ion-label>Tất cả</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="awaiting_payment" class="segment-btn">
+          <ion-label>Chờ thanh toán</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="confirmed" class="segment-btn">
+          <ion-label>Đã xác nhận</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="processing" class="segment-btn">
+          <ion-label>Đang xử lý</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="shipping" class="segment-btn">
+          <ion-label>Đang giao</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="delivered" class="segment-btn">
+          <ion-label>Đã giao</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="completed" class="segment-btn">
+          <ion-label>Hoàn thành</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="cancelled" class="segment-btn">
+          <ion-label>Đã hủy</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Empty State -->
+  <div *ngIf="filteredOrders.length === 0" class="empty-state">
+    <div class="empty-icon-wrapper">
+      <ion-icon name="receipt-outline"></ion-icon>
+    </div>
+    <h2 class="empty-title">Chưa có đơn hàng</h2>
+    <p class="empty-text">Bạn chưa có đơn hàng nào {{ selectedFilter !== 'all' ? 'ở trạng thái này' : '' }}</p>
+    <ion-button routerLink="/tabs/tab1" class="action-button">
+      <ion-icon name="cart-outline" slot="start"></ion-icon>
+      Mua sắm ngay
+    </ion-button>
+  </div>
+
+  <!-- Orders List -->
+  <div *ngIf="filteredOrders.length > 0" class="orders-container">
+    <div class="modern-order-card" *ngFor="let order of filteredOrders">
+      <div class="order-header">
+        <div class="header-left">
+          <div class="order-id">
+            <ion-icon name="receipt-outline"></ion-icon>
+            <span>Mã đơn: #{{ order.id }}</span>
+          </div>
+          <div class="order-date">{{ formatDate(order.createdAt) }}</div>
+        </div>
+        <ion-badge class="status-badge" [class.status-pending]="order.status === 'awaiting_payment'" 
+                   [class.status-processing]="order.status === 'processing'"
+                   [class.status-delivered]="order.status === 'delivered'"
+                   [class.status-cancelled]="order.status === 'cancelled'">
+          <ion-icon [name]="getOrderStatusIcon(order.status)"></ion-icon>
+          {{ statusLabels[order.status] }}
+        </ion-badge>
+      </div>
+
+      <div class="order-body">
+        <div class="info-row">
+          <ion-icon name="person-outline"></ion-icon>
+          <span>{{ order.customerName }}</span>
+        </div>
+        <div class="info-row">
+          <ion-icon name="call-outline"></ion-icon>
+          <span>{{ order.customerPhone }}</span>
+        </div>
+        <div class="info-row">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{ order.deliveryAddress }}</span>
+        </div>
+        <div class="info-row">
+          <ion-icon name="cube-outline"></ion-icon>
+          <span>{{ getTotalItems(order) }} sản phẩm</span>
+        </div>
+        
+        <div class="order-total">
+          <span class="total-label">Tổng tiền</span>
+          <span class="total-amount">{{ formatPrice(order.total) }}</span>
+        </div>
+
+        <div class="info-row">
+          <ion-icon name="wallet-outline"></ion-icon>
+          <span>{{ paymentStatusLabels[order.paymentStatus] }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="order.paymentReference">
+          <ion-icon name="qr-code-outline"></ion-icon>
+          <span>Mã giao dịch: {{ order.paymentReference }}</span>
+        </div>
+
+        <div class="eta-row">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ getEtaText(order) }}</span>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-step" *ngFor="let step of getTimelineSteps(order)" [ngClass]="'step-' + step.state">
+            <span class="timeline-dot"></span>
+            <span class="timeline-label">{{ step.label }}</span>
+          </div>
+        </div>
+
+        <div class="order-actions">
+          <ion-button fill="clear" class="detail-btn" (click)="viewOrderDetail(order)">
+            <ion-icon name="eye-outline" slot="start"></ion-icon>
+            Chi tiết
+          </ion-button>
+          <ion-button 
+            *ngIf="order.status === 'awaiting_payment' || order.status === 'confirmed' || order.status === 'processing' || order.status === 'shipping'"
+            fill="clear" 
+            class="cancel-btn"
+            (click)="cancelOrder(order)">
+            <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+            Hủy đơn
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

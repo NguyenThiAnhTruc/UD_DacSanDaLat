@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DaLatFarm</string>
+    <string name="title_activity_main">DaLatFarm</string>
+    <string name="package_name">com.dalatfarm.app</string>
+    <string name="custom_url_scheme">com.dalatfarm.app</string>
+</resources>

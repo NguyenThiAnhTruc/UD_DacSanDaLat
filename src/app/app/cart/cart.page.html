@@ -1,0 +1,215 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1" class="back-button"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="title-content">
+      <span class="title-text">Giỏ hàng</span>
+      <span class="cart-count" *ngIf="cartItems.length > 0">({{ getItemCount() }})</span>
+    </ion-title>
+    <ion-buttons slot="end" *ngIf="cartItems.length > 0">
+      <ion-button (click)="clearCart()" class="icon-button" aria-label="Xóa toàn bộ giỏ hàng">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Empty Cart State -->
+  <div *ngIf="cartItems.length === 0" class="empty-cart">
+    <div class="empty-icon-wrapper">
+      <ion-icon name="cart-outline"></ion-icon>
+    </div>
+    <h2 class="empty-title">Giỏ hàng trống</h2>
+    <p class="empty-text">Hãy thêm sản phẩm vào giỏ hàng để mua sắm</p>
+    <ion-button class="action-button" (click)="continueShopping()">
+      <ion-icon name="storefront-outline" slot="start"></ion-icon>
+      Tiếp tục mua sắm
+    </ion-button>
+  </div>
+
+  <!-- Cart Items -->
+  <div *ngIf="cartItems.length > 0 && !showCheckoutForm" class="cart-content">
+    <div class="cart-items-wrapper">
+      <div *ngFor="let item of cartItems" class="modern-cart-item">
+        <div class="item-image-wrapper">
+          <img [src]="item.product.image" alt="{{ item.product.name }}" title="{{ item.product.name }}" class="item-image" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';">
+        </div>
+        
+        <div class="item-details">
+          <h3 class="item-name">{{ item.product.name }}</h3>
+          <div class="item-price">
+            <span class="price-value">{{ item.product.price.toLocaleString('vi-VN') }}đ</span>
+            <span class="price-unit">/ {{ item.product.unit }}</span>
+          </div>
+          
+          <div class="item-controls">
+            <div class="quantity-selector">
+              <ion-button fill="clear" size="small" class="quantity-btn" (click)="updateQuantity(item, -1)" [attr.aria-label]="'Giảm số lượng ' + item.product.name">
+                <ion-icon name="remove"></ion-icon>
+              </ion-button>
+              <span class="quantity-value">{{ item.quantity }}</span>
+              <ion-button fill="clear" size="small" class="quantity-btn" (click)="updateQuantity(item, 1)" [attr.aria-label]="'Tăng số lượng ' + item.product.name">
+                <ion-icon name="add"></ion-icon>
+              </ion-button>
+            </div>
+            
+            <div class="item-total">
+              <span class="total-label">Tổng:</span>
+              <span class="total-value">{{ (item.product.price * item.quantity).toLocaleString('vi-VN') }}đ</span>
+            </div>
+          </div>
+        </div>
+        
+        <ion-button fill="clear" class="remove-btn" (click)="confirmRemoveItem(item)" [attr.aria-label]="'Xóa ' + item.product.name + ' khỏi giỏ hàng'">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Cart Summary -->
+    <div class="modern-cart-summary">
+      <div class="summary-card">
+        <div class="summary-header">
+          <ion-icon name="receipt-outline"></ion-icon>
+          <h3>Tổng đơn hàng</h3>
+        </div>
+        <div class="summary-rows">
+          <div class="summary-row">
+            <span class="row-label">Số lượng</span>
+            <span class="row-value">{{ getItemCount() }} sản phẩm</span>
+          </div>
+          <div class="summary-row total-row">
+            <span class="row-label">Tổng tiền</span>
+            <span class="row-value total-value">{{ getTotal().toLocaleString('vi-VN') }}đ</span>
+          </div>
+        </div>
+        <ion-button expand="block" class="checkout-button" (click)="proceedToCheckout()">
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          Tiến hành đặt hàng
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout Form -->
+  <div *ngIf="showCheckoutForm" class="modern-checkout-form">
+    <div class="form-card">
+      <div class="card-header">
+        <div class="header-icon">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Thông tin giao hàng</h3>
+      </div>
+      <div class="form-fields">
+        <div class="form-field">
+          <ion-label class="field-label">
+            <ion-icon name="person-outline"></ion-icon>
+            Họ và tên *
+          </ion-label>
+          <ion-input class="modern-input" [(ngModel)]="customerName" type="text" placeholder="Nhập họ và tên"></ion-input>
+        </div>
+
+        <div class="form-field">
+          <ion-label class="field-label">
+            <ion-icon name="call-outline"></ion-icon>
+            Số điện thoại *
+          </ion-label>
+          <ion-input class="modern-input" [(ngModel)]="customerPhone" type="tel" placeholder="Nhập số điện thoại"></ion-input>
+        </div>
+
+        <div class="form-field">
+          <ion-label class="field-label">
+            <ion-icon name="location-outline"></ion-icon>
+            Địa chỉ giao hàng *
+          </ion-label>
+          <ion-textarea class="modern-textarea" [(ngModel)]="deliveryAddress" rows="3" placeholder="Nhập địa chỉ đầy đủ"></ion-textarea>
+        </div>
+
+        <div class="form-field">
+          <ion-label class="field-label">
+            <ion-icon name="document-text-outline"></ion-icon>
+            Ghi chú đơn hàng
+          </ion-label>
+          <ion-textarea class="modern-textarea" [(ngModel)]="orderNote" rows="2" placeholder="Ghi chú cho người bán (tùy chọn)"></ion-textarea>
+        </div>
+
+        <div class="form-field payment-field">
+          <ion-label class="field-label">
+            <ion-icon name="wallet-outline"></ion-icon>
+            Phương thức thanh toán *
+          </ion-label>
+          <ion-radio-group [(ngModel)]="selectedPaymentMethod" class="payment-method-group">
+            <ion-item lines="none" class="payment-method-item" *ngFor="let method of paymentMethodOptions" [disabled]="method.disabled">
+              <ion-icon [name]="method.icon" slot="start"></ion-icon>
+              <ion-label>
+                {{ method.label }}
+                <p *ngIf="method.note">{{ method.note }}</p>
+              </ion-label>
+              <ion-radio slot="end" [value]="method.value" [disabled]="method.disabled"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="form-card order-summary-card">
+      <div class="card-header">
+        <div class="header-icon">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Thông tin đơn hàng</h3>
+      </div>
+      <div class="order-items-list">
+        <div *ngFor="let item of cartItems" class="order-item">
+          <span class="item-info">{{ item.product.name }} x {{ item.quantity }}</span>
+          <span class="item-price">{{ (item.product.price * item.quantity).toLocaleString('vi-VN') }}đ</span>
+        </div>
+        <div class="order-total">
+          <span class="total-label">Tổng cộng</span>
+          <span class="total-amount">{{ getTotal().toLocaleString('vi-VN') }}đ</span>
+        </div>
+      </div>
+
+      <div class="bank-transfer-qr" *ngIf="showQRPayment && selectedPaymentMethod === 'bank_transfer'">
+        <div class="qr-header">
+          <ion-icon name="qr-code-outline"></ion-icon>
+          <h4>Quét mã QR để chuyển khoản</h4>
+        </div>
+        <div class="qr-body">
+          <img [src]="qrCodeUrl" alt="QR chuyển khoản" class="qr-image">
+          <p>Số tiền: <strong>{{ paymentAmount.toLocaleString('vi-VN') }}đ</strong></p>
+          <p>Nội dung: <strong>{{ paymentReference }}</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="checkout-actions">
+      <ion-button expand="block" fill="outline" class="cancel-btn" (click)="cancelCheckout()" [disabled]="isProcessingOrder">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Quay lại
+      </ion-button>
+      <ion-button
+        expand="block"
+        class="confirm-btn"
+        (click)="showQRPayment && selectedPaymentMethod === 'bank_transfer' ? confirmBankTransferPayment() : placeOrder()"
+        [disabled]="isProcessingOrder">
+        <ion-spinner *ngIf="isProcessingOrder" name="crescent"></ion-spinner>
+        <span *ngIf="!isProcessingOrder">
+          <ion-icon [name]="showQRPayment && selectedPaymentMethod === 'bank_transfer' ? 'checkmark-done-outline' : 'checkmark-done-outline'" slot="start"></ion-icon>
+          {{ showQRPayment && selectedPaymentMethod === 'bank_transfer' ? 'Đã gửi yêu cầu xác nhận chuyển khoản' : 'Xác nhận đặt hàng' }}
+        </span>
+      </ion-button>
+    </div>
+
+    <div class="checkout-actions" *ngIf="showQRPayment && selectedPaymentMethod === 'bank_transfer'">
+      <ion-button expand="block" fill="outline" class="cancel-btn" (click)="cancelBankTransferPayment()" [disabled]="isProcessingOrder">
+        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+        Hủy thanh toán QR
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

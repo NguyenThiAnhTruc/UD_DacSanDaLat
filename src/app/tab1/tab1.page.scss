@@ -1,0 +1,873 @@
+.modern-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --min-height: clamp(52px, 12vw, 60px);
+    
+    .title-content {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 2vw, 10px);
+      font-weight: 700;
+      font-size: clamp(14px, 4vw, 18px);
+      
+      ion-icon {
+        font-size: clamp(20px, 5vw, 26px);
+      }
+    }
+    
+    .qr-button {
+      --padding-start: clamp(8px, 2vw, 12px);
+      --padding-end: clamp(8px, 2vw, 12px);
+      min-width: 44px;
+      min-height: 44px;
+      
+      ion-icon {
+        font-size: clamp(20px, 5vw, 24px);
+      }
+    }
+    
+    .cart-button {
+      position: relative;
+      --padding-start: clamp(8px, 2vw, 12px);
+      --padding-end: clamp(8px, 2vw, 12px);
+      min-width: 44px;
+      min-height: 44px;
+      
+      ion-icon {
+        font-size: clamp(20px, 5vw, 24px);
+      }
+      
+      .cart-badge {
+        position: absolute;
+        top: clamp(2px, 1vw, 4px);
+        right: clamp(2px, 1vw, 4px);
+        font-size: clamp(8px, 2vw, 10px);
+        font-weight: 700;
+        min-width: clamp(16px, 4vw, 18px);
+        height: clamp(16px, 4vw, 18px);
+        border-radius: clamp(8px, 2vw, 9px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(8px, 2vw, 20px);
+}
+
+.banner-section {
+  position: relative;
+  width: 100%;
+  height: min(280px, 45vh);
+  overflow: hidden;
+  margin-bottom: 32px;
+
+  .banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.9);
+  }
+
+  .banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+      rgba(16, 185, 129, 0.85) 0%, 
+      rgba(5, 150, 105, 0.92) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .banner-content {
+    text-align: center;
+    color: white;
+    animation: slideInUp 0.8s ease-out;
+  }
+
+  .banner-title {
+    font-size: clamp(20px, 5vw, 30px);
+    font-weight: 800;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+  }
+
+  .banner-subtitle {
+    font-size: clamp(13px, 3.5vw, 18px);
+    margin: 0 0 20px 0;
+    opacity: 0.95;
+    font-weight: 500;
+  }
+
+  .banner-badges {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    
+    .quality-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: fadeIn 0.8s ease-out 0.3s backwards;
+    }
+  }
+}
+
+.featured-section {
+  padding: 0 clamp(8px, 4vw, 16px) clamp(16px, 6vw, 32px);
+
+  .section-header {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: clamp(16px, 5vw, 20px);
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+    text-align: center;
+
+    ion-icon {
+      color: #f59e0b;
+      font-size: 24px;
+    }
+  }
+
+  .featured-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.card-hover:hover {
+      transform: translateY(-6px);
+    }
+
+    &:active {
+      transform: translateY(-3px) scale(0.98);
+    }
+
+    .featured-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: clamp(100px, 30vw, 150px);
+      overflow: hidden;
+      background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .stock-indicator {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(16, 185, 129, 0.95);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 2;
+        backdrop-filter: blur(8px);
+
+        
+        ion-icon {
+          font-size: 14px;
+        }
+
+        &.low-stock {
+          background: rgba(245, 158, 11, 0.95);
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        &.out-of-stock {
+          background: rgba(239, 68, 68, 0.95);
+        }
+      }
+
+      .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(16, 185, 129, 0.9);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        
+        ion-icon {
+          font-size: 32px;
+          color: white;
+        }
+        
+        span {
+          color: white;
+          font-weight: 600;
+          font-size: 14px;
+        }
+      }
+
+      &:hover {
+        img {
+          transform: scale(1.15);
+        }
+        
+        .image-overlay {
+          opacity: 1;
+        }
+      }
+    }
+
+    .featured-name {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      padding: 12px 12px 4px 12px;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .featured-price {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #10b981;
+      padding: 0 12px 14px 12px;
+      margin: 0;
+    }
+  }
+}
+
+.modern-search {
+  padding: clamp(10px, 4vw, 16px);
+  position: relative;
+
+  .custom-searchbar {
+    --background: white;
+    --border-radius: 16px;
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --icon-color: #10b981;
+    --placeholder-color: #9ca3af;
+    --color: #111827;
+    padding: 0;
+    
+    .searchbar-input-container {
+      height: 52px;
+    }
+  }
+
+  .search-suggestions {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 16px 16px 0 0;
+    z-index: 9999;
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease-out;
+
+    /* Desktop: position absolute instead */
+    @media (min-width: 992px) {
+      position: absolute;
+      top: calc(100% - 8px);
+      bottom: auto;
+      left: 16px;
+      right: 16px;
+      border-radius: 16px;
+      max-height: 240px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    ion-list {
+      padding: 8px 0;
+      background: transparent;
+
+      ion-item {
+        --background: white;
+        --padding-start: 16px;
+        --padding-end: 16px;
+        --min-height: 48px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          --background: #f0fdf4;
+        }
+
+        ion-icon {
+          color: #9ca3af;
+          font-size: 20px;
+          margin-right: 12px;
+          
+          &.suggestion-arrow {
+            color: #10b981;
+            font-size: 18px;
+          }
+        }
+
+        ion-label {
+          color: #374151;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+.favorites-section {
+  padding: clamp(16px, 5vw, 24px) clamp(12px, 4vw, 16px) clamp(16px, 5vw, 32px);
+  background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+  margin-bottom: clamp(16px, 4vw, 24px);
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 20px 0;
+    text-align: center;
+
+    ion-icon {
+      color: #ef4444;
+      font-size: 24px;
+      animation: heartBeat 1.5s ease-in-out infinite;
+    }
+  }
+
+  .favorite-badge-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    
+    ion-icon {
+      color: #ef4444;
+      font-size: 20px;
+    }
+  }
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1); }
+}
+
+.category-filter .modern-segment {
+  border-radius: 16px;
+  padding: 4px;
+  background: white;
+}
+
+.category-filter ion-segment-button {
+  --indicator-color: transparent;
+  --indicator-box-shadow: none;
+  --color: #6b7280;
+  --color-checked: white;
+  --background-checked: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --border-radius: 12px;
+  font-weight: 600;
+  text-transform: none;
+  min-height: 44px;
+  transition: all 0.3s ease;
+}
+
+.category-filter ion-segment-button:hover {
+  --color: #10b981;
+}
+
+.category-filter ion-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.category-filter ion-label ion-icon {
+  font-size: 18px;
+}
+
+ion-card.product-card.modern-card {
+  margin: 8px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  background: white;
+  border: 1px solid rgba(16, 185, 129, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+  }
+
+  &:active {
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  .image-container {
+    position: relative;
+    background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+    height: clamp(140px, 40vw, 220px);
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:hover img {
+      transform: scale(1.1);
+    }
+
+    .stock-badge-wrapper {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 10;
+    }
+
+    .stock-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      
+      ion-icon {
+        font-size: 14px;
+      }
+    }
+
+    .out-of-stock-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease;
+
+      .out-of-stock-label {
+        background: rgba(239, 68, 68, 0.95);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+        animation: bounce 0.5s ease;
+
+        ion-icon {
+          font-size: 24px;
+        }
+      }
+    }
+
+    .quick-view-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      
+      .quick-view-btn {
+        --background: white;
+        --color: #10b981;
+        --border-radius: 24px;
+        --padding-start: 20px;
+        --padding-end: 20px;
+        height: 44px;
+        font-weight: 700;
+        text-transform: none;
+        font-size: 14px;
+      }
+    }
+
+    &:hover .quick-view-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+ion-card-header {
+  padding: clamp(10px, 3vw, 16px) clamp(12px, 3vw, 16px) clamp(6px, 2vw, 8px) clamp(12px, 3vw, 16px);
+
+  ion-card-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    font-weight: 600;
+
+    ion-icon {
+      font-size: 16px;
+      color: #10b981;
+    }
+  }
+
+  ion-card-title {
+    font-size: clamp(16px, 4vw, 19px);
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+
+    .stars {
+      display: flex;
+      gap: 2px;
+      
+      ion-icon {
+        font-size: 16px;
+      }
+    }
+
+    .rating-text {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 600;
+    }
+  }
+}
+
+ion-card-content {
+  padding: clamp(10px, 3vw, 12px) clamp(12px, 3vw, 16px) clamp(12px, 3vw, 16px) clamp(12px, 3vw, 16px);
+
+  .description {
+    font-size: clamp(12px, 3vw, 14px);
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .price-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: clamp(10px, 3vw, 16px) 0;
+    padding: clamp(10px, 3vw, 16px);
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border-radius: 16px;
+
+    .price-info {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .price {
+      color: #059669;
+      margin: 0;
+      font-weight: 900;
+      font-size: clamp(20px, 6vw, 26px);
+    }
+
+    .unit {
+      color: #10b981;
+      font-size: clamp(12px, 3vw, 15px);
+      font-weight: 700;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 2vw, 10px);
+    margin-top: clamp(10px, 3vw, 16px);
+
+    ion-button {
+      --border-radius: 14px;
+      --padding-top: clamp(12px, 3vw, 16px);
+      --padding-bottom: clamp(12px, 3vw, 16px);
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0.3px;
+      height: auto;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      ion-icon {
+        font-size: 20px;
+        margin-right: 6px;
+      }
+
+      &:hover:not([disabled]) {
+        transform: translateY(-2px);
+        --box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      &.add-cart-btn {
+        --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+        &.disabled-btn {
+          --background: #d1d5db;
+          --color: #6b7280;
+          cursor: not-allowed;
+          opacity: 0.6;
+
+          &:hover {
+            transform: none;
+            --box-shadow: none;
+          }
+        }
+      }
+
+      &.detail-btn {
+        --border-width: 2px;
+        --border-color: #10b981;
+      }
+    }
+  }
+}
+
+  .empty-state {
+    text-align: center;
+    padding: clamp(40px, 12vw, 80px) clamp(16px, 5vw, 32px);
+    color: #6b7280;
+  }
+
+  .empty-icon-wrapper {
+    width: clamp(80px, 25vw, 120px);
+    height: clamp(80px, 25vw, 120px);
+    margin: 0 auto clamp(16px, 4vw, 24px);
+    background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .empty-icon {
+    font-size: clamp(40px, 12vw, 60px);
+    color: #10b981;
+  }
+
+  .empty-state h3 {
+    margin: clamp(16px, 4vw, 24px) 0 clamp(8px, 2vw, 12px) 0;
+    font-size: clamp(18px, 5vw, 22px);
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .empty-state p {
+    margin: 0 0 clamp(16px, 4vw, 24px) 0;
+    font-size: clamp(13px, 3vw, 15px);
+    color: #6b7280;
+    line-height: 1.6;
+  }
+
+  .empty-state ion-button {
+    --border-radius: 24px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    height: 48px;
+    font-weight: 700;
+    text-transform: none;
+  }
+
+  .empty-state ion-button ion-icon {
+    margin-right: 8px;
+  }
+
+.slide-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+@media (max-width: 768px) {
+  .banner-section {
+    height: clamp(140px, 40vh, 190px);
+    margin-bottom: clamp(12px, 3vw, 20px);
+  }
+
+  .banner-overlay {
+    padding: clamp(12px, 3vw, 16px);
+  }
+
+  .banner-title {
+    font-size: clamp(18px, 6vw, 24px);
+    margin-bottom: 8px;
+  }
+
+  .banner-subtitle {
+    font-size: clamp(11px, 3vw, 14px);
+    margin-bottom: 12px;
+  }
+
+  .featured-section {
+    padding: 0 clamp(8px, 3vw, 10px) clamp(14px, 4vw, 20px);
+  }
+
+  .featured-card {
+    border-radius: 14px;
+  }
+
+  .featured-image-wrapper {
+    height: clamp(80px, 28vw, 120px);
+  }
+
+  .featured-name {
+    font-size: clamp(11px, 3vw, 13px);
+    padding: clamp(8px, 2vw, 10px) clamp(8px, 2vw, 10px) clamp(2px, 1vw, 2px);
+  }
+
+  .featured-price {
+    font-size: clamp(12px, 3vw, 14px);
+    padding: 0 clamp(8px, 2vw, 10px) clamp(8px, 2vw, 10px);
+  }
+
+  .products-grid {
+    padding: 0 2px clamp(10px, 3vw, 14px);
+  }
+
+  ion-card.product-card.modern-card {
+    margin: 6px;
+    border-radius: 14px;
+  }
+
+  .image-container {
+    height: clamp(120px, 45vw, 160px);
+  }
+
+  ion-card-header {
+    padding: clamp(8px, 2vw, 10px) clamp(8px, 2vw, 10px) clamp(4px, 1vw, 6px);
+  }
+
+  ion-card-subtitle {
+    font-size: clamp(10px, 2vw, 11px);
+    margin-bottom: 6px;
+  }
+
+  ion-card-title {
+    font-size: clamp(14px, 3vw, 16px);
+    margin-bottom: 6px;
+  }
+
+  ion-card-content {
+    padding: clamp(6px, 2vw, 8px) clamp(8px, 2vw, 10px) clamp(8px, 2vw, 10px);
+  }
+
+  .description {
+    font-size: clamp(11px, 2vw, 12px);
+    margin-bottom: 10px;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .price-container {
+    margin: clamp(8px, 2vw, 10px) 0;
+    padding: clamp(8px, 2vw, 10px);
+  }
+
+  .price {
+    font-size: clamp(18px, 4vw, 20px);
+  }
+
+  .unit {
+    font-size: clamp(10px, 2vw, 12px);
+  }
+
+  .action-buttons {
+    gap: 8px;
+  }
+
+  .action-buttons ion-button {
+    height: 44px;
+    font-size: clamp(12px, 2vw, 13px);
+  }
+}

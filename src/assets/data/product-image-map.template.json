@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Dâu Tây Đà Lạt",
+    "imageUrl": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=1200"
+  },
+  {
+    "id": 2,
+    "name": "Atiso Đà Lạt",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Artichoke_J1.jpg/1200px-Artichoke_J1.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Cà Phê Arabica",
+    "imageUrl": "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1200"
+  },
+  {
+    "id": 4,
+    "name": "Bơ Đà Lạt",
+    "imageUrl": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=1200"
+  },
+  {
+    "id": 5,
+    "name": "Sữa Bò Đà Lạt",
+    "imageUrl": "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=1200"
+  },
+  {
+    "id": 6,
+    "name": "Rau Xà Lách",
+    "imageUrl": "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=1200"
+  },
+  {
+    "id": 7,
+    "name": "Hoa Hồng Đà Lạt",
+    "imageUrl": "https://images.unsplash.com/photo-1518709594023-6eab9bab4489?w=1200"
+  },
+  {
+    "id": 8,
+    "name": "Măng Tây Đà Lạt",
+    "imageUrl": "https://images.unsplash.com/photo-1598870588615-d362c58a0a1b?w=1200"
+  },
+  {
+    "id": 9,
+    "name": "Mật Ong Rừng",
+    "imageUrl": "https://images.unsplash.com/photo-1587049352846-4a222e784efc?w=1200"
+  },
+  {
+    "id": 10,
+    "name": "Bắp Cải Tím",
+    "imageUrl": "https://images.unsplash.com/photo-1556801712-76c8eb07bbc9?w=1200"
+  },
+  {
+    "id": 11,
+    "name": "Dứa Đà Lạt",
+    "imageUrl": "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=1200"
+  },
+  {
+    "id": 12,
+    "name": "Trà Ô Long",
+    "imageUrl": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=1200"
+  }
+]

@@ -1,0 +1,324 @@
+.profile-section {
+  padding: clamp(12px, 3vw, 16px);
+
+  .profile-card {
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+
+    .guest-chip {
+      margin-bottom: 12px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: clamp(12px, 3vw, 16px);
+      margin-bottom: clamp(14px, 4vw, 20px);
+
+      .profile-avatar {
+        width: clamp(48px, 14vw, 65px);
+        height: clamp(48px, 14vw, 65px);
+        min-width: clamp(48px, 14vw, 65px);
+        border: 3px solid #2dd36f;
+      }
+
+      .profile-info {
+        flex: 1;
+
+        h2 {
+          font-size: clamp(16px, 4vw, 20px);
+          font-weight: 700;
+          color: #1a1a1a;
+          margin-bottom: 6px;
+        }
+
+        .role-chip {
+          margin: 0 0 8px;
+          height: clamp(24px, 5vw, 28px);
+          font-size: clamp(11px, 2vw, 12px);
+          font-weight: 600;
+
+          ion-icon {
+            font-size: clamp(13px, 3vw, 15px);
+          }
+        }
+
+        p {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: clamp(12px, 3vw, 13px);
+          color: #666;
+          margin: 4px 0;
+
+          ion-icon {
+            font-size: clamp(14px, 3vw, 16px);
+            color: #2dd36f;
+          }
+
+          &.guest-note {
+            color: #ffc409;
+            font-weight: 600;
+            margin-top: 8px;
+            font-size: clamp(11px, 2vw, 12px);
+          }
+        }
+      }
+    }
+
+    ion-button {
+      --border-radius: 12px;
+      --border-width: 2px;
+      font-weight: 600;
+      text-transform: none;
+    }
+  }
+}
+
+.quick-actions {
+  padding: 0 clamp(12px, 3vw, 16px) clamp(12px, 3vw, 16px);
+
+  .action-card {
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    padding: clamp(14px, 4vw, 20px);
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(45, 211, 111, 0.2);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    ion-icon {
+      font-size: clamp(28px, 7vw, 42px);
+      margin-bottom: clamp(6px, 2vw, 10px);
+    }
+
+    h3 {
+      font-size: clamp(20px, 4vw, 26px);
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: clamp(6px, 2vw, 8px) 0 clamp(2px, 1vw, 4px);
+    }
+
+    p {
+      font-size: clamp(12px, 3vw, 14px);
+      color: #666;
+      margin: 0;
+    }
+
+    ion-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.orders-section,
+.settings-section {
+  padding: 0 clamp(12px, 3vw, 16px) clamp(12px, 3vw, 16px);
+
+  .guest-orders-prompt {
+    margin: clamp(12px, 3vw, 16px) 0;
+
+    .guest-lock-icon {
+      font-size: clamp(40px, 12vw, 48px);
+    }
+
+    ion-card {
+      border-radius: 16px;
+      padding: clamp(12px, 3vw, 16px);
+
+      ion-card-content {
+        padding: clamp(14px, 3vw, 20px);
+
+        h3 {
+          font-size: clamp(16px, 4vw, 18px);
+          font-weight: 700;
+          margin: clamp(8px, 2vw, 12px) 0 clamp(6px, 2vw, 8px);
+          color: #1a1a1a;
+        }
+
+        p {
+          color: #666;
+          font-size: clamp(13px, 3vw, 14px);
+          margin-bottom: clamp(12px, 3vw, 16px);
+        }
+
+        ion-button {
+          margin-top: 8px;
+          --border-radius: 12px;
+          font-weight: 600;
+          font-size: clamp(13px, 3vw, 14px);
+        }
+      }
+    }
+  }
+
+  .section-header {
+    padding: clamp(12px, 3vw, 16px) 0 clamp(8px, 2vw, 12px);
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 2vw, 8px);
+      font-size: clamp(16px, 4vw, 18px);
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0;
+
+      ion-icon {
+        font-size: clamp(18px, 4vw, 22px);
+        color: #2dd36f;
+      }
+    }
+  }
+
+  .empty-orders {
+    text-align: center;
+    padding: clamp(30px, 8vw, 40px) clamp(12px, 3vw, 20px);
+
+    .empty-icon {
+      font-size: clamp(60px, 18vw, 100px);
+      color: #ddd;
+      margin-bottom: clamp(8px, 2vw, 12px);
+    }
+
+    p {
+      font-size: clamp(14px, 3vw, 16px);
+      color: #666;
+    }
+  }
+
+  ion-list {
+    background: transparent;
+
+    .order-item {
+      --padding-start: clamp(12px, 3vw, 16px);
+      --padding-end: clamp(12px, 3vw, 16px);
+      --padding-top: clamp(10px, 2vw, 12px);
+      --padding-bottom: clamp(10px, 2vw, 12px);
+      margin-bottom: clamp(8px, 2vw, 12px);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      background: white;
+
+      .status-icon {
+        font-size: clamp(24px, 6vw, 32px);
+        margin-right: clamp(8px, 2vw, 12px);
+      }
+
+      ion-label {
+        h2 {
+          font-size: clamp(14px, 3vw, 16px);
+          font-weight: 700;
+          color: #1a1a1a;
+          margin-bottom: 6px;
+        }
+
+        .order-date,
+        .order-items {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: clamp(12px, 3vw, 13px);
+          color: #666;
+          margin: 4px 0;
+
+          ion-icon {
+            font-size: clamp(12px, 3vw, 14px);
+          }
+        }
+      }
+
+      .order-end {
+        text-align: right;
+
+        .order-total {
+          font-size: clamp(14px, 3vw, 16px);
+          font-weight: 700;
+          color: #2dd36f;
+          margin-bottom: 8px;
+        }
+
+        ion-badge {
+          font-size: clamp(10px, 2vw, 11px);
+          padding: clamp(3px, 1vw, 4px) clamp(6px, 1vw, 8px);
+        }
+      }
+    }
+
+    ion-item {
+      --padding-start: clamp(12px, 3vw, 16px);
+      --padding-end: clamp(12px, 3vw, 16px);
+      margin-bottom: 8px;
+      border-radius: 12px;
+      background: white;
+
+      ion-icon {
+        font-size: clamp(20px, 4vw, 24px);
+        margin-right: clamp(8px, 2vw, 12px);
+      }
+
+      ion-label {
+        font-size: clamp(13px, 3vw, 15px);
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.app-version {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 13px;
+}
+
+ion-toolbar {
+  --background: linear-gradient(135deg, #2dd36f 0%, #1fa855 100%);
+  
+  ion-title {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+}

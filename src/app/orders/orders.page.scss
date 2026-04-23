@@ -1,0 +1,430 @@
+// =============================
+// Modern Orders Page Styles
+// =============================
+
+// Header Styles
+.modern-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --min-height: 60px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+  }
+
+  .back-button {
+    --color: white;
+  }
+
+  .title-content {
+    .title-text {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  .filter-toolbar {
+    --background: white;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .filter-container {
+    padding: 0 20px;
+    overflow-x: auto;
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .modern-segment {
+    --background: #f3f4f6;
+    border-radius: 12px;
+    padding: 4px;
+
+    .segment-btn {
+      --color: #6b7280;
+      --color-checked: white;
+      --indicator-color: transparent;
+      --indicator-height: 0;
+      min-width: auto;
+      padding: 0;
+      margin: 0;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+
+      &::part(native) {
+        padding: 8px 16px;
+        min-height: 44px;
+      }
+
+      ion-label {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: none;
+      }
+
+      &.segment-button-checked {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+      }
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  padding: 40px;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+
+  .empty-icon-wrapper {
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 50%;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+    animation: pulse 2s ease infinite;
+
+    ion-icon {
+      font-size: 80px;
+      color: #10b981;
+    }
+  }
+
+  .empty-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.02em;
+  }
+
+  .empty-text {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+  }
+
+  .action-button {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --border-radius: 14px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
+    --box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+
+    &:hover {
+      --box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+      transform: translateY(-2px);
+    }
+
+    ion-icon {
+      font-size: 22px;
+    }
+  }
+}
+
+// Orders Container
+.orders-container {
+  padding: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+// Modern Order Card
+.modern-order-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f3f4f6;
+  margin-bottom: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    border-bottom: 2px solid #e5e7eb;
+
+    .header-left {
+      flex: 1;
+    }
+
+    .order-id {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1f2937;
+      margin-bottom: 6px;
+
+      ion-icon {
+        font-size: 20px;
+        color: #10b981;
+      }
+    }
+
+    .order-date {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      ion-icon {
+        font-size: 16px;
+      }
+
+      &.status-pending {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: white;
+      }
+
+      &.status-processing {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+      }
+
+      &.status-delivered {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+      }
+
+      &.status-cancelled {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+      }
+    }
+  }
+
+  .order-body {
+    padding: 20px;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #f0fdf4;
+    }
+
+    ion-icon {
+      font-size: 20px;
+      color: #10b981;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    span {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      line-height: 1.4;
+    }
+  }
+
+  .order-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 12px;
+    margin: 16px 0;
+    border: 2px solid #10b981;
+
+    .total-label {
+      font-size: 16px;
+      font-weight: 800;
+      color: #059669;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .total-amount {
+      font-size: 24px;
+      font-weight: 900;
+      color: #059669;
+    }
+  }
+
+  .eta-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(59, 130, 246, 0.08);
+    color: #1d4ed8;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .timeline-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+
+    .timeline-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    &.step-done {
+      background: rgba(16, 185, 129, 0.16);
+      color: #047857;
+    }
+
+    &.step-current {
+      background: rgba(59, 130, 246, 0.16);
+      color: #1d4ed8;
+    }
+
+    &.step-todo {
+      background: rgba(107, 114, 128, 0.14);
+      color: #4b5563;
+    }
+
+    &.step-cancelled {
+      background: rgba(239, 68, 68, 0.16);
+      color: #b91c1c;
+    }
+  }
+
+  .order-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+
+    ion-button {
+      --border-radius: 10px;
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --padding-top: 10px;
+      --padding-bottom: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: none;
+      margin: 0;
+      transition: all 0.3s ease;
+
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+
+    .detail-btn {
+      --color: #10b981;
+
+      &:hover {
+        --color: #059669;
+        background: #f0fdf4;
+      }
+    }
+
+    .cancel-btn {
+      --color: #ef4444;
+
+      &:hover {
+        --color: #dc2626;
+        background: #fef2f2;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}

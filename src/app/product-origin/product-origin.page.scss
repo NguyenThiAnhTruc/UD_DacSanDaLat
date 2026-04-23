@@ -1,0 +1,818 @@
+// =======================================
+// Modern Product Origin Page Styles
+// =======================================
+
+// Header Styles
+.modern-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --min-height: 60px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+  }
+
+  .back-button {
+    --color: white;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+
+  .title-content {
+    .title-text {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+  }
+}
+
+// Loading State
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  animation: fadeIn 0.3s ease;
+  
+  ion-spinner {
+    margin-bottom: 20px;
+    --color: #10b981;
+    transform: scale(1.5);
+  }
+  
+  p {
+    color: #6b7280;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+// Main Content Container
+.origin-content {
+  padding: 20px;
+  padding-bottom: 40px;
+  animation: fadeIn 0.5s ease;
+}
+
+// Product Hero Card
+.product-hero-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25);
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+  }
+
+  .hero-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    z-index: 1;
+  }
+
+  .product-image-wrapper {
+    position: relative;
+    flex-shrink: 0;
+
+    .product-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 4px solid white;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s backwards;
+    }
+
+    .image-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+
+  .product-info {
+    flex: 1;
+    min-width: 0;
+
+    .product-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      margin: 0 0 12px 0;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+      .scanned-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(16, 185, 129, 0.18);
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        color: #ecfdf5;
+        font-size: 12px;
+        font-weight: 700;
+
+        ion-icon {
+          font-size: 14px;
+        }
+      }
+
+    .origin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.2);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      ion-icon {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// Modern Card Base Styles
+.modern-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f3f4f6;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.15s; }
+  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(4) { animation-delay: 0.25s; }
+  &:nth-child(5) { animation-delay: 0.3s; }
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .header-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+
+      &.gradient {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+        ion-icon {
+          color: white;
+        }
+      }
+
+      ion-icon {
+        font-size: 26px;
+        color: #10b981;
+      }
+    }
+
+    .card-title {
+      flex: 1;
+      font-size: 20px;
+      font-weight: 800;
+      color: #1f2937;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+  }
+}
+
+.trace-edit-toggle {
+  margin-left: auto;
+  --border-radius: 10px;
+  text-transform: none;
+  font-weight: 600;
+}
+
+.traceability-info-editor {
+  margin-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+
+  ion-item {
+    --background: #f9fafb;
+    --border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  .traceability-info-actions {
+    margin-top: 8px;
+  }
+}
+
+// QR Card
+.qr-card {
+  .qr-content {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .qr-display {
+    flex-shrink: 0;
+
+    .qr-image {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-radius: 16px;
+      border: 2px solid #10b981;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .qr-details {
+    flex: 1;
+
+    .code-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+
+      .code-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+      }
+
+      .code-value {
+        font-family: 'Courier New', 'Monaco', monospace;
+        font-size: 20px;
+        font-weight: 800;
+        color: #10b981;
+        letter-spacing: 0.05em;
+      }
+    }
+
+    .qr-hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+
+      ion-icon {
+        font-size: 16px;
+        color: #10b981;
+      }
+    }
+
+    .qr-actions {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      ion-button {
+        --border-radius: 10px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .qr-card {
+    .qr-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .qr-display {
+      width: 100%;
+
+      .qr-image {
+        width: 140px;
+        height: 140px;
+      }
+    }
+
+    .qr-details {
+      width: 100%;
+
+      .qr-actions {
+        ion-button {
+          width: 100%;
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+// Farm Info Card
+.farm-card {
+  .farm-info-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .farm-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: #f0fdf4;
+      transform: translateX(4px);
+    }
+
+    .info-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+
+      ion-icon {
+        font-size: 24px;
+        color: white;
+      }
+    }
+
+    .info-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .info-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .info-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1f2937;
+        word-wrap: break-word;
+      }
+    }
+  }
+}
+
+// Certification Card
+.cert-card {
+  .certification-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .cert-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 12px;
+    border: 2px solid #10b981;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      transform: translateX(4px);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+
+      .cert-check ion-icon,
+      .cert-name {
+        color: white;
+      }
+    }
+
+    .cert-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      ion-icon {
+        font-size: 28px;
+        color: #10b981;
+        transition: color 0.3s ease;
+      }
+    }
+
+    .cert-name {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 700;
+      color: #059669;
+      letter-spacing: 0.01em;
+      transition: color 0.3s ease;
+    }
+  }
+}
+
+// Timeline Card
+.timeline-card {
+  .modern-timeline {
+    padding: 8px 0;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 20px;
+    position: relative;
+
+    &:last-child {
+      .indicator-line {
+        display: none;
+      }
+    }
+
+    .timeline-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+
+      .indicator-dot {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+        z-index: 2;
+        animation: pulse 2s ease-in-out infinite;
+
+        ion-icon {
+          font-size: 28px;
+          color: white;
+        }
+      }
+
+      .indicator-line {
+        width: 3px;
+        flex: 1;
+        min-height: 60px;
+        background: linear-gradient(180deg, #10b981 0%, #d1fae5 100%);
+        margin: 4px 0;
+      }
+    }
+
+    .timeline-card-content {
+      flex: 1;
+      padding-bottom: 24px;
+
+      .stage-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #1f2937;
+        margin: 6px 0 12px 0;
+        letter-spacing: -0.01em;
+      }
+
+      .stage-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #059669;
+        margin-bottom: 12px;
+
+        ion-icon {
+          font-size: 14px;
+        }
+      }
+
+      .stage-description {
+        font-size: 15px;
+        color: #6b7280;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Nutrition Card
+.nutrition-card {
+  .nutrition-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .nutrition-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 12px;
+    border: 2px solid #d1fae5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-color: #10b981;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+
+      .stat-icon ion-icon,
+      .stat-value,
+      .stat-label {
+        color: white;
+      }
+    }
+
+    .stat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      ion-icon {
+        font-size: 32px;
+        color: #10b981;
+        transition: color 0.3s ease;
+      }
+    }
+
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: 800;
+        color: #1f2937;
+        transition: color 0.3s ease;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+      }
+    }
+  }
+
+  .vitamins-section {
+    padding-top: 20px;
+    border-top: 2px dashed #d1fae5;
+
+    .vitamins-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #1f2937;
+      margin: 0 0 12px 0;
+
+      ion-icon {
+        font-size: 20px;
+        color: #10b981;
+      }
+    }
+
+    .vitamin-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .vitamin-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: white;
+      border: 2px solid #10b981;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #059669;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+
+        ion-icon {
+          color: white;
+        }
+      }
+
+      ion-icon {
+        font-size: 16px;
+        color: #10b981;
+        transition: color 0.3s ease;
+      }
+    }
+  }
+}
+
+// Action Section
+.action-section {
+  margin-top: 8px;
+  padding: 0 4px;
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.4s backwards;
+
+  .action-button {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --border-radius: 16px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    --box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      --box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    ion-icon {
+      font-size: 22px;
+      margin-right: 8px;
+    }
+  }
+}
+
+// No Product State
+.no-product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  padding: 40px;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+
+  ion-icon {
+    font-size: 80px;
+    color: #fbbf24;
+    margin-bottom: 20px;
+    animation: bounce 1s ease infinite;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #6b7280;
+    margin-bottom: 24px;
+  }
+
+  ion-button {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --border-radius: 12px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    font-weight: 700;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

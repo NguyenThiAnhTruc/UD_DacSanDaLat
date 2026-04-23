@@ -1,0 +1,165 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="receipt-outline"></ion-icon>
+      Quản lý đơn hàng
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="exportCsv()" aria-label="Export đơn hàng ra CSV">
+        <ion-icon name="download-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="loadOrders()">
+        <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- Lọc trạng thái -->
+  <div class="filter-bar">
+    <ion-segment [(ngModel)]="filterStatus" scrollable>
+      <ion-segment-button *ngFor="let opt of statusOptions" [value]="opt.value">
+        <ion-label>{{ opt.label }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Thống kê nhanh -->
+  <div class="summary-row">
+    <div class="summary-chip">
+      <ion-icon name="bag-handle-outline" color="warning"></ion-icon>
+      <span>Tổng: {{ orders.length }}</span>
+    </div>
+    <div class="summary-chip">
+      <ion-icon name="hourglass-outline" color="primary"></ion-icon>
+      <span>Đang xử lý: {{ inProgressCount }}</span>
+    </div>
+    <div class="summary-chip">
+      <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+      <span>Hoàn thành: {{ deliveredCount }}</span>
+    </div>
+    <div class="summary-chip summary-chip--today">
+      <ion-icon name="calendar-clear-outline" color="success"></ion-icon>
+      <span>Hôm nay: {{ completedTodayCount }}</span>
+    </div>
+    <div class="summary-chip">
+      <ion-icon name="cash-outline" color="tertiary"></ion-icon>
+      <span>Chờ xác thực CK: {{ pendingVerificationCount }}</span>
+    </div>
+  </div>
+
+  <div class="dashboard-range">
+    <ion-segment [(ngModel)]="dashboardRange">
+      <ion-segment-button value="day">
+        <ion-label>Ngày</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="week">
+        <ion-label>Tuần</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="month">
+        <ion-label>Tháng</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <div class="dashboard-metrics">
+      <ion-badge color="success">Đơn trong kỳ: {{ ordersInDashboardRange.length }}</ion-badge>
+      <ion-badge color="warning">Doanh thu trong kỳ: {{ dashboardRevenue | number:'1.0-0' }}đ</ion-badge>
+    </div>
+  </div>
+
+  <div class="daily-completion" *ngIf="completedByDay.length > 0">
+    <div class="daily-completion__title">
+      <ion-icon name="analytics-outline" color="success"></ion-icon>
+      <span>Hoàn thành theo ngày (7 ngày gần nhất)</span>
+    </div>
+    <div class="daily-completion__badges">
+      <ion-badge color="success" *ngFor="let stat of completedByDay">
+        {{ stat.label }}: {{ stat.count }}
+      </ion-badge>
+    </div>
+  </div>
+
+  <!-- Danh sách đơn hàng -->
+  <div class="orders-list">
+
+    <div *ngIf="filteredOrders.length === 0" class="empty-state">
+      <ion-icon name="receipt-outline"></ion-icon>
+      <p>{{ orders.length === 0 ? 'Chưa có đơn hàng nào. Khi khách mua hàng, đơn sẽ xuất hiện ở đây.' : 'Không có đơn hàng theo bộ lọc này.' }}</p>
+    </div>
+
+    <ion-card *ngFor="let order of filteredOrders" class="order-card">
+      <ion-card-header>
+        <div class="order-header">
+          <span class="order-code">{{ order.orderCode ?? order.id }}</span>
+          <ion-badge [color]="getStatusColor(order.status)">{{ getStatusText(order.status) }}</ion-badge>
+        </div>
+        <p class="order-date">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Thông tin khách -->
+        <div class="customer-info">
+          <ion-icon name="person-outline" color="medium"></ion-icon>
+          <span>{{ order.customerName }}</span>
+          <span class="separator">|</span>
+          <ion-icon name="call-outline" color="medium"></ion-icon>
+          <span>{{ order.customerPhone }}</span>
+        </div>
+        <div class="address-line">
+          <ion-icon name="location-outline" color="medium"></ion-icon>
+          <span>{{ order.deliveryAddress }}</span>
+        </div>
+
+        <!-- Sản phẩm -->
+        <div class="items-list">
+          <div *ngFor="let item of order.items" class="order-item">
+            <span class="item-name">{{ item.product.name }}</span>
+            <span class="item-qty">x{{ item.quantity }} {{ item.product.unit }}</span>
+            <span class="item-price">{{ (item.product.price * item.quantity) | number:'1.0-0' }}đ</span>
+          </div>
+        </div>
+
+        <!-- Tổng tiền -->
+        <div class="order-total">
+          <span>Tổng cộng:</span>
+          <strong>{{ order.total | number:'1.0-0' }}đ</strong>
+        </div>
+
+        <div class="payment-line">
+          <ion-icon name="wallet-outline" color="medium"></ion-icon>
+          <span>{{ getPaymentStatusText(order.paymentStatus) }}</span>
+          <ion-badge *ngIf="order.paymentReference" color="medium">{{ order.paymentReference }}</ion-badge>
+        </div>
+
+        <ion-button
+          *ngIf="order.paymentMethod === 'bank_transfer' && order.paymentStatus === 'pending' && order.status !== 'cancelled'"
+          expand="block"
+          color="tertiary"
+          fill="outline"
+          (click)="verifyPayment(order)"
+          class="update-btn">
+          <ion-icon name="shield-checkmark-outline" slot="start"></ion-icon>
+          Xác thực thanh toán
+        </ion-button>
+
+        <!-- Nút cập nhật trạng thái -->
+        <ion-button
+          *ngIf="getNextStatus(order.status)"
+          expand="block"
+          color="warning"
+          fill="outline"
+          (click)="updateStatus(order)"
+          class="update-btn">
+          <ion-icon name="arrow-forward-circle-outline" slot="start"></ion-icon>
+          Chuyển → {{ getStatusText(getNextStatus(order.status)!) }}
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+
+</ion-content>

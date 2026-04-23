@@ -1,7 +1,8 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="success">
     <ion-title>
-      Tab 3
+      <ion-icon name="person-outline"></ion-icon>
+      Tài Khoản
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,9 +10,232 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
+      <ion-title size="large">Tài Khoản</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  <!-- User Profile Card -->
+  <div class="profile-section">
+    <ion-card class="profile-card">
+      <ion-card-content>
+        <!-- Guest Mode Warning -->
+        <ion-chip color="warning" *ngIf="isGuestMode" class="guest-chip">
+          <ion-icon name="information-circle"></ion-icon>
+          <ion-label>Chế độ khách - Đăng nhập để lưu thông tin</ion-label>
+        </ion-chip>
+
+        <div class="profile-header">
+          <ion-avatar class="profile-avatar">
+            <img [src]="userInfo.avatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" (error)="onAvatarLoadError()" alt="Avatar" />
+          </ion-avatar>
+          <div class="profile-info">
+            <h2>{{ userInfo.name }}</h2>
+            <ion-chip *ngIf="!isGuestMode" [color]="roleColor" class="role-chip">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+              <ion-label>Vai trò: {{ roleLabel }}</ion-label>
+            </ion-chip>
+            <p *ngIf="!isGuestMode">
+              <ion-icon name="mail-outline"></ion-icon>
+              {{ userInfo.email }}
+            </p>
+            <p *ngIf="!isGuestMode">
+              <ion-icon name="call-outline"></ion-icon>
+              {{ userInfo.phone || 'Chưa cập nhật' }}
+            </p>
+            <p *ngIf="!isGuestMode">
+              <ion-icon name="location-outline"></ion-icon>
+              {{ userInfo.address || 'Chưa cập nhật' }}
+            </p>
+            <p *ngIf="isGuestMode" class="guest-note">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              Vui lòng đăng nhập để lưu đơn hàng và quản lý thông tin
+            </p>
+          </div>
+        </div>
+        
+        <!-- Guest Mode: Show Login Button -->
+        <ion-button 
+          *ngIf="isGuestMode" 
+          expand="block" 
+          color="success" 
+          (click)="goToLogin()">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          Đăng nhập / Đăng ký
+        </ion-button>
+
+        <!-- Logged In: Show Edit Button -->
+        <ion-button 
+          *ngIf="!isGuestMode" 
+          expand="block" 
+          fill="outline" 
+          color="success" 
+          [disabled]="isEditing"
+          (click)="editProfile()">
+          <ion-spinner name="circles" *ngIf="isEditing"></ion-spinner>
+          <ion-icon name="create-outline" slot="start" *ngIf="!isEditing"></ion-icon>
+          <span *ngIf="!isEditing">Chỉnh sửa thông tin</span>
+          <span *ngIf="isEditing">Đang xử lý...</span>
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <div class="action-card" (click)="viewOrderDetails(orders[0])" [class.disabled]="orders.length === 0">
+            <ion-icon name="bag-handle-outline" color="success"></ion-icon>
+            <h3>{{ orders.length }}</h3>
+            <p>Đơn hàng</p>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="action-card" (click)="viewFavorites()">
+            <ion-icon name="heart" color="danger"></ion-icon>
+            <h3>{{ favoriteProductsCount }}</h3>
+            <p>Yêu thích</p>
+            <ion-badge color="danger" *ngIf="favoriteProductsCount > 0">{{ favoriteProductsCount }}</ion-badge>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="isAdmin">
+        <ion-col size="6">
+          <div class="action-card" (click)="openStockManagement()">
+            <ion-icon name="construct-outline" color="success"></ion-icon>
+            <h3>Nhập kho</h3>
+            <p>Form quản trị kho</p>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="action-card" (click)="openStockHistory()">
+            <ion-icon name="analytics-outline" color="primary"></ion-icon>
+            <h3>Lịch sử kho</h3>
+            <p>Lọc ngày/sản phẩm + CSV</p>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="isSeller">
+        <ion-col size="6">
+          <div class="action-card" (click)="openSellerProducts()">
+            <ion-icon name="storefront-outline" color="warning"></ion-icon>
+            <h3>Sản phẩm</h3>
+            <p>Thêm & đặt giá bán</p>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="action-card" (click)="openSellerOrders()">
+            <ion-icon name="receipt-outline" color="warning"></ion-icon>
+            <h3>Đơn hàng</h3>
+            <p>Quản lý đơn hàng</p>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Orders History -->
+  <div class="orders-section">
+    <div class="section-header">
+      <h2>
+        <ion-icon name="receipt-outline"></ion-icon>
+        Lịch sử đơn hàng
+      </h2>
+    </div>
+
+    <!-- Guest Mode: Show Login Prompt -->
+    <div class="guest-orders-prompt" *ngIf="isGuestMode">
+      <ion-card color="light">
+        <ion-card-content class="ion-text-center">
+          <ion-icon name="lock-closed-outline" color="medium" class="guest-lock-icon"></ion-icon>
+          <h3>Đăng nhập để xem đơn hàng</h3>
+          <p>Đăng nhập hoặc đăng ký để lưu và theo dõi đơn hàng của bạn</p>
+          <ion-button color="success" (click)="goToLogin()">
+            <ion-icon name="log-in-outline" slot="start"></ion-icon>
+            Đăng nhập ngay
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Logged In: Show Orders -->
+    <div class="empty-orders" *ngIf="!isGuestMode && orders.length === 0">
+      <ion-icon name="receipt-outline" class="empty-icon"></ion-icon>
+      <p>Chưa có đơn hàng nào</p>
+    </div>
+
+    <ion-list *ngIf="!isGuestMode && orders.length > 0">
+      <ion-item 
+        *ngFor="let order of orders" 
+        button 
+        (click)="viewOrderDetails(order)"
+        lines="none"
+        class="order-item">
+        <ion-icon 
+          [name]="getStatusIcon(order.status)" 
+          [color]="getStatusColor(order.status)" 
+          slot="start"
+          class="status-icon">
+        </ion-icon>
+        <ion-label>
+          <h2>#{{ order.id }}</h2>
+          <p class="order-date">
+            <ion-icon name="calendar-outline"></ion-icon>
+            {{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+          <p class="order-items">{{ order.items.length }} sản phẩm</p>
+        </ion-label>
+        <div slot="end" class="order-end">
+          <p class="order-total">{{ order.total | number:'1.0-0' }}đ</p>
+          <ion-badge [color]="getStatusColor(order.status)">
+            {{ getStatusText(order.status) }}
+          </ion-badge>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Settings Menu -->
+  <div class="settings-section">
+    <div class="section-header">
+      <h2>
+        <ion-icon name="settings-outline"></ion-icon>
+        Cài đặt
+      </h2>
+    </div>
+
+    <ion-list>
+      <ion-item button lines="none">
+        <ion-icon name="notifications-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>Thông báo</ion-label>
+        <ion-toggle slot="end" checked></ion-toggle>
+      </ion-item>
+
+      <ion-item button lines="none">
+        <ion-icon name="language-outline" slot="start" color="tertiary"></ion-icon>
+        <ion-label>Ngôn ngữ</ion-label>
+        <ion-note slot="end">Tiếng Việt</ion-note>
+      </ion-item>
+
+      <ion-item button lines="none">
+        <ion-icon name="help-circle-outline" slot="start" color="success"></ion-icon>
+        <ion-label>Trợ giúp</ion-label>
+      </ion-item>
+
+      <ion-item button lines="none">
+        <ion-icon name="information-circle-outline" slot="start" color="warning"></ion-icon>
+        <ion-label>Giới thiệu</ion-label>
+      </ion-item>
+
+      <ion-item button lines="none" (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start" color="danger"></ion-icon>
+        <ion-label color="danger">Đăng xuất</ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div class="app-version">
+    <p>Nông Sản Đà Lạt v1.0.0</p>
+  </div>
 </ion-content>

@@ -1,0 +1,579 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="warning">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="storefront-outline"></ion-icon>
+      Quản lý sản phẩm
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleAnalytics()" title="Thống kê" aria-label="Bật hoặc tắt bảng thống kê">
+        <ion-icon name="bar-chart-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="toggleAddForm()" title="Thêm sản phẩm" [attr.aria-label]="showAddForm ? 'Đóng form thêm sản phẩm' : 'Mở form thêm sản phẩm'">
+        <ion-icon [name]="showAddForm ? 'close-outline' : 'add-outline'" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- Form thêm sản phẩm mới -->
+  <ion-card *ngIf="showAddForm" class="add-form-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="add-circle-outline" color="warning"></ion-icon>
+        Thêm sản phẩm mới
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label position="stacked">Tên sản phẩm *</ion-label>
+        <ion-input [(ngModel)]="newName" placeholder="VD: Dâu Tây Đà Lạt" clearInput></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Giá bán (VNĐ) *</ion-label>
+        <ion-input type="number" min="1" [(ngModel)]="newPrice" placeholder="VD: 120000"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Danh mục *</ion-label>
+        <ion-select [(ngModel)]="newCategory" placeholder="Chọn danh mục">
+          <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Đơn vị</ion-label>
+        <ion-select [(ngModel)]="newUnit">
+          <ion-select-option *ngFor="let u of units" [value]="u">{{ u }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Xuất xứ</ion-label>
+        <ion-input [(ngModel)]="newOrigin" placeholder="VD: Đà Lạt, Lâm Đồng"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Mô tả sản phẩm</ion-label>
+        <ion-textarea rows="3" [(ngModel)]="newDescription" placeholder="Mô tả ngắn về sản phẩm..."></ion-textarea>
+      </ion-item>
+      <div class="description-warning" *ngFor="let warning of newDescriptionWarnings">
+        <ion-icon name="alert-circle-outline" color="warning"></ion-icon>
+        <span>{{ warning }}</span>
+      </div>
+
+      <ion-item>
+        <ion-label position="stacked">URL hình ảnh (tùy chọn)</ion-label>
+        <ion-input [(ngModel)]="newImage" placeholder="https://..."></ion-input>
+      </ion-item>
+
+      <div class="upload-image-section">
+        <input 
+          type="file" 
+          id="imageUploadNew" 
+          accept="image/*"
+          (change)="handleImageUpload($event, true)"
+          style="display: none"
+        />
+        <ion-button expand="block" fill="outline" color="secondary" (click)="clickImageUploadNew()">
+          <ion-icon name="image-outline" slot="start"></ion-icon>
+          Hoặc chọn ảnh từ máy
+        </ion-button>
+          <small *ngIf="newImage" class="image-preview-hint">
+            ✓ Ảnh đã tải lên và sẵn sàng lưu qua Cloudinary
+        </small>
+      </div>
+
+      <div class="form-actions">
+        <ion-button expand="block" color="warning" (click)="submitNewProduct()" [disabled]="isSubmitting">
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+          <ion-icon *ngIf="!isSubmitting" name="checkmark-outline" slot="start"></ion-icon>
+          <span *ngIf="!isSubmitting">Thêm sản phẩm</span>
+        </ion-button>
+        <ion-button expand="block" fill="outline" color="medium" (click)="toggleAddForm()">
+          Hủy
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Analytics Dashboard -->
+  <div *ngIf="showAnalytics" class="analytics-dashboard">
+    <ion-card>
+      <ion-card-header color="success">
+        <ion-card-title>
+          <ion-icon name="bar-chart"></ion-icon>
+          Thống Kê Bán Hàng
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="analytics-controls">
+          <div class="time-range-filter">
+            <span class="control-label">Khoảng thời gian</span>
+            <ion-segment [value]="analyticsTimeRange" (ionChange)="onAnalyticsTimeRangeChanged($event.detail.value)">
+              <ion-segment-button *ngFor="let option of analyticsTimeRangeOptions" [value]="option.value">
+                <ion-label>{{ option.label }}</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+            <div class="time-range-hint">Dữ liệu bán hàng theo {{ analyticsTimeRangeLabel }}</div>
+          </div>
+
+          <div class="status-filter">
+            <span class="control-label">Trạng thái đơn hàng</span>
+            <ion-segment [value]="analyticsOrderStatusFilter" (ionChange)="onAnalyticsOrderStatusChanged($event.detail.value)">
+              <ion-segment-button *ngFor="let option of analyticsOrderStatusOptions" [value]="option.value">
+                <ion-label>{{ option.label }}</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+            <div class="time-range-hint">Đang thống kê theo {{ analyticsOrderStatusLabel }}</div>
+          </div>
+
+          <div class="export-actions">
+            <ion-button size="small" fill="outline" color="medium" (click)="exportStatisticsCsv()">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Xuất CSV
+            </ion-button>
+            <ion-button size="small" fill="outline" color="primary" (click)="exportStatisticsExcel()">
+              <ion-icon name="document-outline" slot="start"></ion-icon>
+              Xuất Excel
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">{{ totalRevenue | number:'1.0-0' }}</div>
+            <div class="stat-label">Doanh Thu (đ) kỳ này</div>
+            <ion-icon name="trending-up" color="success"></ion-icon>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ totalSales }}</div>
+            <div class="stat-label">Tổng Bán</div>
+            <ion-icon name="checkmark-circle" color="warning"></ion-icon>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ totalViews }}</div>
+            <div class="stat-label">Lượt Xem (lũy kế)</div>
+            <ion-icon name="eye" color="primary"></ion-icon>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ averageOrderValue | number:'1.0-0' }}</div>
+            <div class="stat-label">Giá TB</div>
+            <ion-icon name="calculator" color="secondary"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Top by Revenue -->
+        <div class="top-products">
+          <h3>🏆 Top Doanh Thu</h3>
+          <ion-list *ngIf="topProductsByRevenue.length > 0">
+            <ion-item *ngFor="let p of topProductsByRevenue">
+              <ion-label>
+                <h3>{{ p.name }}</h3>
+                <p>{{ p.revenue | number:'1.0-0' }} đ ({{ p.sales }} bán)</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          <div class="no-data" *ngIf="topProductsByRevenue.length === 0">Chưa có dữ liệu doanh thu.</div>
+        </div>
+
+        <!-- Top by Sales -->
+        <div class="top-products">
+          <h3>🎯 Top Bán Chạy</h3>
+          <ion-list *ngIf="topProductsBySales.length > 0">
+            <ion-item *ngFor="let p of topProductsBySales">
+              <ion-label>
+                <h3>{{ p.name }}</h3>
+                <p>{{ p.sales }} lần • {{ p.revenue | number:'1.0-0' }} đ</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          <div class="no-data" *ngIf="topProductsBySales.length === 0">Chưa có dữ liệu bán chạy.</div>
+        </div>
+
+        <!-- Top by Views -->
+        <div class="top-products">
+          <h3>👁️ Top Lượt Xem</h3>
+          <ion-list *ngIf="topProductsByViews.length > 0">
+            <ion-item *ngFor="let p of topProductsByViews">
+              <ion-label>
+                <h3>{{ p.name }}</h3>
+                <p>{{ p.views }} lượt xem • ⭐ {{ p.rating }} sao</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          <div class="no-data" *ngIf="topProductsByViews.length === 0">Chưa có dữ liệu lượt xem.</div>
+        </div>
+
+        <div class="sales-statistics-table">
+          <h3>📋 Bảng Thống Kê Bán Hàng</h3>
+          <div class="no-data" *ngIf="productStatisticsRows.length === 0">
+            Chưa có sản phẩm để thống kê.
+          </div>
+          <div class="table-scroll" *ngIf="productStatisticsRows.length > 0">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Sản phẩm</th>
+                  <th class="number">Giá</th>
+                  <th class="number">Lượt xem</th>
+                  <th class="number">Đã bán</th>
+                  <th class="number">Doanh thu</th>
+                  <th class="number">So với kỳ trước</th>
+                  <th class="number">Chuyển đổi</th>
+                  <th class="number">Tồn kho</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of productStatisticsRows; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ row.name }}</td>
+                  <td class="number">{{ row.price | number:'1.0-0' }} đ</td>
+                  <td class="number">{{ row.views | number:'1.0-0' }}</td>
+                  <td class="number">{{ row.sales | number:'1.0-0' }}</td>
+                  <td class="number">{{ row.revenue | number:'1.0-0' }} đ</td>
+                  <td class="number trend-cell">
+                    <span *ngIf="row.revenueDeltaPercent === null" class="trend neutral">Mới</span>
+                    <span *ngIf="row.revenueDeltaPercent !== null && row.revenueDeltaPercent > 0" class="trend up">
+                      ▲ {{ row.revenueDeltaPercent | number:'1.0-1' }}%
+                    </span>
+                    <span *ngIf="row.revenueDeltaPercent !== null && row.revenueDeltaPercent < 0" class="trend down">
+                      ▼ {{ row.revenueDeltaPercent | number:'1.0-1' }}%
+                    </span>
+                    <span *ngIf="row.revenueDeltaPercent !== null && row.revenueDeltaPercent === 0" class="trend neutral">0.0%</span>
+                  </td>
+                  <td class="number">{{ row.conversionRate | number:'1.0-1' }}%</td>
+                  <td class="number">{{ row.stock | number:'1.0-0' }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3"><strong>Tổng cộng</strong></td>
+                  <td class="number"><strong>{{ productStatisticsTotals.totalViews | number:'1.0-0' }}</strong></td>
+                  <td class="number"><strong>{{ productStatisticsTotals.totalSales | number:'1.0-0' }}</strong></td>
+                  <td class="number"><strong>{{ productStatisticsTotals.totalRevenue | number:'1.0-0' }} đ</strong></td>
+                  <td class="number">-</td>
+                  <td class="number"><strong>{{ productStatisticsTotals.averageConversionRate | number:'1.0-1' }}%</strong></td>
+                  <td class="number">-</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Quick Action Bar with Bulk Edit -->
+  <div class="quick-action-bar">
+    <ion-button expand="block" fill="outline" color="success" (click)="goToStockManagement()">
+      <ion-icon name="cube-outline" slot="start"></ion-icon>
+      Nhập số lượng tồn kho
+    </ion-button>
+    <ion-button expand="block" fill="outline" color="primary" (click)="importImagesFromTemplate()" [disabled]="isImportingImages">
+      <ion-spinner *ngIf="isImportingImages" name="crescent" slot="start"></ion-spinner>
+      <ion-icon *ngIf="!isImportingImages" name="cloud-upload-outline" slot="start"></ion-icon>
+      <span *ngIf="!isImportingImages">Import ảnh từ JSON</span>
+      <span *ngIf="isImportingImages">Đang import ảnh...</span>
+    </ion-button>
+    <ion-button expand="block" fill="outline" [color]="bulkEditMode ? 'danger' : 'warning'" (click)="toggleBulkEditMode()">
+      <ion-icon [name]="bulkEditMode ? 'close-outline' : 'checkmark-done-outline'" slot="start"></ion-icon>
+      {{ bulkEditMode ? 'Thoát Bulk' : 'Sửa Hàng Loạt' }}
+    </ion-button>
+  </div>
+
+  <ion-card *ngIf="smartStockAlerts.length > 0" class="smart-alert-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="warning-outline" color="warning"></ion-icon>
+        Cảnh báo tồn kho thông minh
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let alert of smartStockAlerts.slice(0, 6)" lines="full">
+        <ion-label>
+          <h3>{{ alert.productName }}</h3>
+          <p>
+            Tồn khả dụng: <strong>{{ alert.availableStock }}</strong> | Ngưỡng: <strong>{{ alert.threshold }}</strong> |
+            Gợi ý nhập thêm: <strong>{{ alert.suggestedRestock }}</strong>
+          </p>
+        </ion-label>
+        <ion-badge [color]="alert.urgency === 'critical' ? 'danger' : 'warning'">
+          {{ alert.urgency === 'critical' ? 'Khẩn cấp' : 'Cảnh báo' }}
+        </ion-badge>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Bulk Edit Panel -->
+  <div *ngIf="bulkEditMode" class="bulk-edit-panel">
+    <ion-card>
+      <ion-card-header color="warning">
+        <ion-card-title>Sửa {{ selectedCount }} sản phẩm đã chọn</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Chọn trường cần sửa</ion-label>
+          <ion-select [(ngModel)]="bulkEditField" placeholder="Chọn">
+            <ion-select-option value="price">Giá bán (VNĐ)</ion-select-option>
+            <ion-select-option value="category">Danh mục</ion-select-option>
+            <ion-select-option value="status">Trạng thái</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item *ngIf="bulkEditField === 'price'">
+          <ion-label position="stacked">Giá mới (VNĐ)</ion-label>
+          <ion-input type="number" [(ngModel)]="bulkEditValue" placeholder="Nhập giá"></ion-input>
+        </ion-item>
+
+        <ion-item *ngIf="bulkEditField === 'category'">
+          <ion-label position="stacked">Danh mục mới</ion-label>
+          <ion-select [(ngModel)]="bulkEditValue" placeholder="Chọn danh mục">
+            <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item *ngIf="bulkEditField === 'status'">
+          <ion-label position="stacked">Trạng thái mới</ion-label>
+          <ion-select [(ngModel)]="bulkEditValue" placeholder="Chọn">
+            <ion-select-option value="active">Hoạt động</ion-select-option>
+            <ion-select-option value="inactive">Ẩn</ion-select-option>
+            <ion-select-option value="out-of-stock">Hết hàng</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <div class="bulk-actions">
+          <ion-button expand="block" color="warning" (click)="applyBulkEdit()" [disabled]="selectedCount === 0">
+            <ion-icon name="checkmark" slot="start"></ion-icon>
+            Áp dụng sửa
+          </ion-button>
+          <ion-button expand="block" fill="outline" (click)="selectAllFiltered()">
+            <ion-icon name="checkmark-done" slot="start"></ion-icon>
+            Chọn tất cả
+          </ion-button>
+          <ion-button expand="block" fill="outline" color="medium" (click)="clearSelection()">
+            <ion-icon name="close-circle" slot="start"></ion-icon>
+            Bỏ chọn
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Tìm kiếm & Lọc -->
+  <ion-card class="filter-card">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="funnel-outline"></ion-icon>
+        Tìm kiếm & Lọc
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-searchbar 
+        [(ngModel)]="searchQuery" 
+        (ionInput)="onFiltersChanged()"
+        placeholder="Tìm kiếm theo tên sản phẩm..."
+        clearIcon="close"
+        animated
+      ></ion-searchbar>
+
+      <div class="filter-row">
+        <ion-item class="filter-item">
+          <ion-label position="stacked">Danh mục</ion-label>
+          <ion-select [(ngModel)]="filterCategory" (ionChange)="onFiltersChanged()" placeholder="Tất cả">
+            <ion-select-option value="">Tất cả danh mục</ion-select-option>
+            <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="filter-item">
+          <ion-label position="stacked">Trạng thái kho</ion-label>
+          <ion-select [(ngModel)]="filterStockStatus" (ionChange)="onFiltersChanged()" placeholder="Tất cả">
+            <ion-select-option *ngFor="let opt of filterOptions.stockStatus" [value]="opt.value">
+              {{ opt.label }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <div class="price-range">
+        <ion-label>Giá: {{ filterPriceMin | number:'1.0-0' }} - {{ filterPriceMax | number:'1.0-0' }} đ</ion-label>
+        <ion-range 
+          [(ngModel)]="filterPriceMin" 
+          (ionChange)="onFiltersChanged()"
+          min="0" 
+          max="filterPriceMax"
+          pin="true"
+          color="warning"
+        ></ion-range>
+        <ion-range 
+          [(ngModel)]="filterPriceMax" 
+          (ionChange)="onFiltersChanged()"
+          min="filterPriceMin" 
+          max="10000000"
+          pin="true"
+          color="warning"
+        ></ion-range>
+      </div>
+
+      <div class="filter-actions">
+        <ion-button expand="block" fill="outline" color="medium" (click)="resetFilters()" size="small">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Đặt lại
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Danh sách sản phẩm -->
+  <div class="products-list">
+    <div class="section-title">
+      <ion-icon name="list-outline" color="warning"></ion-icon>
+      <span>Kết quả: {{ filteredProducts.length }} / {{ products.length }} sản phẩm</span>
+    </div>
+
+    <ion-card *ngFor="let product of visibleProducts" class="product-card">
+      <!-- View Mode -->
+      <div *ngIf="editingProductId !== product.id">
+        <ion-item lines="none" [class.selected]="selectedProductIds.has(product.id)">
+          <ion-checkbox 
+            *ngIf="bulkEditMode"
+            slot="start"
+            [checked]="selectedProductIds.has(product.id)"
+            (ionChange)="toggleProductSelection(product.id)"
+          ></ion-checkbox>
+          <ion-avatar slot="start">
+            <img [src]="product.image" alt="Ảnh sản phẩm" title="Ảnh sản phẩm" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ product.name }}</h2>
+            <p>
+              <ion-badge color="medium">{{ product.category }}</ion-badge>
+              &nbsp;
+              <ion-badge [color]="getStockBadgeColor(product)">
+                Tồn: {{ product.stock }} {{ product.unit }}
+              </ion-badge>
+            </p>
+            <p class="price-text">{{ product.price | number:'1.0-0' }}đ / {{ product.unit }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item lines="none" class="product-actions" *ngIf="!bulkEditMode">
+          <ion-button fill="clear" color="warning" size="small" (click)="startEditProduct(product)">
+            <ion-icon name="pencil" slot="start"></ion-icon>
+            Sửa
+          </ion-button>
+          <ion-button fill="clear" color="danger" size="small" (click)="deleteProduct(product)">
+            <ion-icon name="trash" slot="start"></ion-icon>
+            Xóa
+          </ion-button>
+          <ion-button fill="clear" color="primary" size="small" (click)="editPrice(product)">
+            <ion-icon name="pricetag" slot="start"></ion-icon>
+            Giá
+          </ion-button>
+        </ion-item>
+      </div>
+
+      <!-- Edit Mode -->
+      <div *ngIf="editingProductId === product.id" class="edit-form-card">
+        <ion-card-header>
+          <ion-card-title>Sửa thông tin sản phẩm</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position="stacked">Tên sản phẩm *</ion-label>
+            <ion-input [(ngModel)]="editName" placeholder="Tên sản phẩm"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Giá (VNĐ) *</ion-label>
+            <ion-input type="number" [(ngModel)]="editPriceValue" min="1" placeholder="Giá"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Danh mục *</ion-label>
+            <ion-select [(ngModel)]="editCategory" placeholder="Chọn danh mục">
+              <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Đơn vị</ion-label>
+            <ion-select [(ngModel)]="editUnit">
+              <ion-select-option *ngFor="let u of units" [value]="u">{{ u }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Xuất xứ</ion-label>
+            <ion-input [(ngModel)]="editOrigin" placeholder="VD: Đà Lạt, Lâm Đồng"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Mô tả sản phẩm</ion-label>
+            <ion-textarea rows="3" [(ngModel)]="editDescription" placeholder="Mô tả sản phẩm..."></ion-textarea>
+          </ion-item>
+          <div class="description-warning" *ngFor="let warning of editDescriptionWarnings">
+            <ion-icon name="alert-circle-outline" color="warning"></ion-icon>
+            <span>{{ warning }}</span>
+          </div>
+
+          <ion-item>
+            <ion-label position="stacked">URL hình ảnh</ion-label>
+            <ion-input [(ngModel)]="editImage" placeholder="https://..."></ion-input>
+          </ion-item>
+
+          <div class="upload-image-section">
+            <input 
+              type="file" 
+              id="imageUploadEdit" 
+              accept="image/*"
+              (change)="handleImageUpload($event, false)"
+              style="display: none"
+            />
+            <ion-button expand="block" fill="outline" color="secondary" size="small" (click)="clickImageUploadEdit()">
+              <ion-icon name="image-outline" slot="start"></ion-icon>
+              Tải ảnh mới
+            </ion-button>
+              <small *ngIf="editImage" class="image-preview-hint">
+                ✓ Ảnh đã tải lên và sẵn sàng lưu qua Cloudinary
+            </small>
+          </div>
+
+          <div class="form-actions">
+            <ion-button expand="block" color="success" (click)="saveEditProduct()">
+              <ion-icon name="checkmark" slot="start"></ion-icon>
+              Lưu thay đổi
+            </ion-button>
+            <ion-button expand="block" fill="outline" color="medium" (click)="cancelEditProduct()">
+              Hủy bỏ
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </div>
+    </ion-card>
+
+    <div *ngIf="filteredProducts.length === 0" class="empty-state">
+      <ion-icon name="cube-outline"></ion-icon>
+      <p>Chưa có sản phẩm nào</p>
+    </div>
+
+    <ion-button
+      *ngIf="canLoadMoreProducts"
+      expand="block"
+      fill="outline"
+      color="warning"
+      (click)="loadMoreProducts()">
+      <ion-icon name="chevron-down-outline" slot="start"></ion-icon>
+      Xem thêm sản phẩm
+    </ion-button>
+  </div>
+
+</ion-content>

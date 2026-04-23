@@ -1,0 +1,212 @@
+<ion-header class="modern-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button class="back-button" defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <div class="title-content">
+      <ion-title class="title-text">Chỉnh sửa thông tin</ion-title>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="profile-container">
+    <!-- Avatar Section -->
+    <div class="avatar-section">
+      <div class="avatar-wrapper">
+        <div class="avatar-glow"></div>
+        <ion-avatar class="avatar-image">
+          <img [src]="avatarPreview || user?.avatar || 'https://ionicframework.com/docs/img/demos/avatar.svg'" alt="Avatar">
+        </ion-avatar>
+        <div class="camera-button" (click)="selectPhoto()" [class.uploading]="isUploadingAvatar">
+          <ion-icon name="camera"></ion-icon>
+          <span *ngIf="isUploadingAvatar" class="upload-spinner"></span>
+        </div>
+      </div>
+      <h2 class="user-name">{{ name || 'Người dùng' }}</h2>
+      <p class="user-email">{{ email || 'email@example.com' }}</p>
+      <div class="error-message" *ngIf="avatarError">
+        <ion-icon name="alert-circle"></ion-icon>
+        {{ avatarError }}
+      </div>
+      <div class="success-message" *ngIf="selectedAvatarFile && !avatarError">
+        <ion-icon name="checkmark-circle"></ion-icon>
+        Ảnh mới được chọn - nhấn Lưu để cập nhật
+      </div>
+    </div>
+
+    <!-- Profile Information Form -->
+    <div class="modern-card">
+      <div class="card-header">
+        <div class="header-icon">
+          <ion-icon name="person"></ion-icon>
+        </div>
+        <h3 class="card-title">Thông tin cá nhân</h3>
+      </div>
+      
+      <div class="card-content">
+        <div class="form-field">
+          <label class="field-label">
+            <ion-icon name="person-outline"></ion-icon>
+            Họ và tên *
+          </label>
+          <input 
+            class="modern-input"
+            [(ngModel)]="name" 
+            placeholder="Nhập họ tên"
+            [class.error]="nameError"
+            type="text">
+          <div class="error-message" *ngIf="nameError">
+            <ion-icon name="alert-circle"></ion-icon>
+            {{ nameError }}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">
+            <ion-icon name="mail-outline"></ion-icon>
+            Email
+          </label>
+          <input 
+            class="modern-input disabled"
+            [value]="email" 
+            placeholder="Email của bạn"
+            disabled 
+            type="email">
+          <p class="field-note">Email không thể thay đổi</p>
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">
+            <ion-icon name="call-outline"></ion-icon>
+            Số điện thoại *
+          </label>
+          <input 
+            class="modern-input"
+            [(ngModel)]="phone" 
+            placeholder="Nhập số điện thoại"
+            [class.error]="phoneError"
+            type="tel">
+          <div class="error-message" *ngIf="phoneError">
+            <ion-icon name="alert-circle"></ion-icon>
+            {{ phoneError }}
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">
+            <ion-icon name="location-outline"></ion-icon>
+            Địa chỉ
+          </label>
+          <textarea 
+            class="modern-textarea"
+            [(ngModel)]="address" 
+            placeholder="Nhập địa chỉ"
+            [class.error]="addressError"
+            rows="3"></textarea>
+          <div class="error-message" *ngIf="addressError">
+            <ion-icon name="alert-circle"></ion-icon>
+            {{ addressError }}
+          </div>
+        </div>
+
+        <button 
+          class="save-button"
+          (click)="saveProfile()"
+          [disabled]="isSaving">
+          <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+          <span *ngIf="!isSaving">
+            <ion-icon name="save"></ion-icon>
+            Lưu thay đổi
+          </span>
+          <span *ngIf="isSaving">Đang lưu...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Change Password Form -->
+    <div class="modern-card">
+      <div class="card-header">
+        <div class="header-icon blue">
+          <ion-icon name="lock-closed"></ion-icon>
+        </div>
+        <h3 class="card-title">Đổi mật khẩu</h3>
+      </div>
+      
+      <div class="card-content">
+        <div class="form-field">
+          <label class="field-label">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            Mật khẩu hiện tại *
+          </label>
+          <input 
+            class="modern-input"
+            [(ngModel)]="currentPassword" 
+            placeholder="Nhập mật khẩu hiện tại"
+            type="password">
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">
+            <ion-icon name="key-outline"></ion-icon>
+            Mật khẩu mới *
+          </label>
+          <input 
+            class="modern-input"
+            [(ngModel)]="newPassword" 
+            placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
+            type="password">
+        </div>
+
+        <div class="form-field">
+          <label class="field-label">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            Xác nhận mật khẩu mới *
+          </label>
+          <input 
+            class="modern-input"
+            [(ngModel)]="confirmPassword" 
+            placeholder="Nhập lại mật khẩu mới"
+            type="password">
+        </div>
+
+        <div class="error-message" *ngIf="passwordError">
+          <ion-icon name="alert-circle"></ion-icon>
+          {{ passwordError }}
+        </div>
+
+        <button 
+          class="change-password-button"
+          (click)="changePassword()"
+          [disabled]="isChangingPassword">
+          <ion-spinner *ngIf="isChangingPassword" name="crescent"></ion-spinner>
+          <span *ngIf="!isChangingPassword">
+            <ion-icon name="key"></ion-icon>
+            Đổi mật khẩu
+          </span>
+          <span *ngIf="isChangingPassword">Đang xử lý...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="modern-card danger-card">
+      <div class="card-header">
+        <div class="header-icon red">
+          <ion-icon name="warning"></ion-icon>
+        </div>
+        <h3 class="card-title">Vùng nguy hiểm</h3>
+      </div>
+      
+      <div class="card-content">
+        <p class="danger-description">Xóa tài khoản sẽ xóa vĩnh viễn tất cả dữ liệu của bạn. Hành động này không thể hoàn tác.</p>
+        <button 
+          class="delete-button"
+          (click)="deleteAccount()">
+          <ion-icon name="trash"></ion-icon>
+          Xóa tài khoản
+        </button>
+      </div>
+    </div>
+  </div>
+</ion-content>

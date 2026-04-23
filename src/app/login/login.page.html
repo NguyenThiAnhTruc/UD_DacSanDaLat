@@ -1,0 +1,203 @@
+<ion-content class="login-content">
+  <div class="login-container">
+    <!-- Header Section with Logo -->
+    <div class="login-header slide-down">
+      <div class="logo-badge">
+        <ion-icon name="leaf"></ion-icon>
+      </div>
+      <h1 class="welcome-title">
+        {{ isLoginMode ? 'Chào Mừng Trở Lại!' : 'Đăng Ký Tài Khoản' }}
+      </h1>
+      <p class="welcome-subtitle">
+        {{ isLoginMode ? 'Mua sắm nông sản sạch từ Đà Lạt' : 'Trở thành thành viên của chúng tôi' }}
+      </p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-container fade-in" *ngIf="isLoginMode">
+      <div class="form-group">
+        <label><ion-icon name="mail-outline"></ion-icon> Email</label>
+        <ion-input 
+          [(ngModel)]="loginEmail" 
+          type="email"
+          placeholder="Nhập email của bạn"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label><ion-icon name="lock-closed-outline"></ion-icon> Mật khẩu</label>
+        <ion-input 
+          [(ngModel)]="loginPassword" 
+          type="password"
+          placeholder="Nhập mật khẩu"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        class="submit-btn"
+        (click)="login()">
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Đăng nhập
+      </ion-button>
+
+      <div class="links-section">
+        <a href="javascript:void(0)" class="forgot-link" (click)="forgotPassword()">
+          <ion-icon name="help-circle-outline"></ion-icon> Quên mật khẩu?
+        </a>
+      </div>
+
+      <div class="divider">
+        <span>hoặc</span>
+      </div>
+
+      <div class="social-login">
+        <ion-button fill="outline" class="social-btn google" (click)="loginWithGoogle()">
+          <ion-icon name="logo-google"></ion-icon>
+          Google
+        </ion-button>
+        <ion-button fill="outline" class="social-btn facebook" (click)="loginWithFacebook()">
+          <ion-icon name="logo-facebook"></ion-icon>
+          Facebook
+        </ion-button>
+      </div>
+
+      <div class="register-section">
+        <p>Chưa có tài khoản? 
+          <a href="javascript:void(0)" class="register-link" (click)="toggleMode()">
+            Đăng ký ngay
+          </a>
+        </p>
+      </div>
+
+      <div class="skip-section">
+        <ion-button 
+          fill="clear" 
+          size="small"
+          class="skip-btn"
+          (click)="skipLogin()">
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+          Bỏ qua - Mua hàng ngay
+        </ion-button>
+      </div>
+
+      <div class="demo-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+        <p style="font-size: 0.85rem; color: #666; text-align: center; margin-bottom: 10px;">
+          Không dăng nhập được? Khôi phục tài khoản demo
+        </p>
+        <ion-button 
+          expand="block"
+          fill="outline" 
+          size="small"
+          class="demo-btn"
+          (click)="reinitializeDemoAccounts()">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Khôi phục tài khoản Demo
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div class="form-container fade-in" *ngIf="!isLoginMode">
+      <div class="form-group">
+        <label><ion-icon name="person-outline"></ion-icon> Họ và tên</label>
+        <ion-input 
+          [(ngModel)]="registerName" 
+          type="text"
+          placeholder="Nhập họ và tên"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label><ion-icon name="mail-outline"></ion-icon> Email</label>
+        <ion-input 
+          [(ngModel)]="registerEmail" 
+          type="email"
+          placeholder="Nhập email của bạn"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label><ion-icon name="call-outline"></ion-icon> Số điện thoại</label>
+        <ion-input 
+          [(ngModel)]="registerPhone" 
+          type="tel"
+          placeholder="Nhập số điện thoại"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label><ion-icon name="location-outline"></ion-icon> Địa chỉ</label>
+        <ion-input 
+          [(ngModel)]="registerAddress" 
+          type="text"
+          placeholder="Nhập địa chỉ"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label><ion-icon name="lock-closed-outline"></ion-icon> Mật khẩu</label>
+        <ion-input 
+          [(ngModel)]="registerPassword" 
+          type="password"
+          placeholder="Nhập mật khẩu"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label><ion-icon name="lock-closed-outline"></ion-icon> Xác nhận mật khẩu</label>
+        <ion-input 
+          [(ngModel)]="registerConfirmPassword" 
+          type="password"
+          placeholder="Xác nhận mật khẩu"
+          class="custom-input">
+        </ion-input>
+      </div>
+
+      <ion-button 
+        expand="block" 
+        class="submit-btn"
+        (click)="register()">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Đăng Ký
+      </ion-button>
+
+      <div class="login-section">
+        <p>Đã có tài khoản? 
+          <a href="javascript:void(0)" class="login-link" (click)="toggleMode()">
+            Đăng nhập ngay
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features-section slide-up">
+      <div class="feature">
+        <div class="feature-icon">
+          <ion-icon name="shield-checkmark"></ion-icon>
+        </div>
+        <p>An toàn & Bảo mật</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <ion-icon name="flash"></ion-icon>
+        </div>
+        <p>Giao hàng nhanh</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <ion-icon name="leaf"></ion-icon>
+        </div>
+        <p>Sản phẩm sạch</p>
+      </div>
+    </div>
+  </div>
+</ion-content>

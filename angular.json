@@ -32,7 +32,7 @@
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+            "scripts": ["src/assets/vendor/xlsx.full.min.js"]
           },
           "configurations": {
             "production": {
@@ -44,8 +44,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "17kb",
+                  "maximumError": "20kb"
                 }
               ],
               "fileReplacements": [
@@ -112,7 +112,7 @@
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+            "scripts": ["src/assets/vendor/xlsx.full.min.js"]
           },
           "configurations": {
             "ci": {
@@ -136,7 +136,8 @@
   "cli": {
     "schematicCollections": [
       "@ionic/angular-toolkit"
-    ]
+    ],
+    "analytics": false
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

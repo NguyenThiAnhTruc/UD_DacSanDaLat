@@ -1,0 +1,75 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1" class="back-button"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="title-content">
+      <span class="title-text">Sản phẩm yêu thích</span>
+      <span class="heart-icon">❤️</span>
+    </ion-title>
+    <ion-buttons slot="end" *ngIf="favoriteProducts.length > 0">
+      <ion-button (click)="clearAllFavorites()" class="icon-button">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Empty State -->
+  <div *ngIf="favoriteProducts.length === 0" class="empty-state">
+    <div class="empty-icon-wrapper">
+      <ion-icon name="heart-outline"></ion-icon>
+    </div>
+    <h2 class="empty-title">Chưa có sản phẩm yêu thích</h2>
+    <p class="empty-text">Hãy khám phá và thêm sản phẩm vào danh sách yêu thích của bạn</p>
+    <ion-button routerLink="/tabs/tab1" class="action-button">
+      <ion-icon name="search-outline" slot="start"></ion-icon>
+      Khám phá sản phẩm
+    </ion-button>
+  </div>
+
+  <!-- Favorites Grid -->
+  <div *ngIf="favoriteProducts.length > 0" class="favorites-container">
+    <div class="products-grid">
+      <div class="modern-product-card" *ngFor="let product of favoriteProducts">
+        <div class="card-image" (click)="viewProduct(product)">
+          <img [src]="product.image" alt="{{ product.name }}" title="{{ product.name }}" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';">
+          <div class="image-overlay"></div>
+          <ion-badge class="rating-badge" *ngIf="product.rating">
+            <ion-icon name="star"></ion-icon>
+            {{ product.rating }}
+          </ion-badge>
+          <ion-button 
+            class="favorite-button active" 
+            fill="clear" 
+            (click)="confirmRemoveFavorite(product); $event.stopPropagation()">
+            <ion-icon name="heart"></ion-icon>
+          </ion-button>
+        </div>
+        
+        <div class="card-content">
+          <div class="category-tag" (click)="viewProduct(product)">{{ product.category }}</div>
+          <h3 class="product-title" (click)="viewProduct(product)">{{ product.name }}</h3>
+          
+          <div class="product-details">
+            <div class="price-wrapper">
+              <span class="price">{{ formatPrice(product.price) }}</span>
+              <span class="unit">/ {{ product.unit }}</span>
+            </div>
+            
+            <div class="stock-badge" [class.low-stock]="product.stock < 10">
+              <ion-icon name="cube-outline"></ion-icon>
+              <span>{{ product.stock }}</span>
+            </div>
+          </div>
+
+          <ion-button expand="block" class="add-to-cart-btn" (click)="addToCart(product)">
+            <ion-icon name="cart-outline" slot="start"></ion-icon>
+            Thêm vào giỏ
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

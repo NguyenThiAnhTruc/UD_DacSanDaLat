@@ -1,0 +1,387 @@
+// ================================
+// Modern Favorites Page Styles
+// ================================
+
+// Header Styles
+.modern-header {
+  ion-toolbar {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --min-height: 60px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+  }
+
+  .back-button {
+    --color: white;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .icon-button {
+    --color: white;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    min-width: 44px;
+    min-height: 44px;
+    
+    ion-icon {
+      font-size: 24px;
+    }
+  }
+
+  .title-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .title-text {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .heart-icon {
+      font-size: 18px;
+      animation: heartBeat 1.5s ease infinite;
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  padding: 40px;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+
+  .empty-icon-wrapper {
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-radius: 50%;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
+    animation: pulse 2s ease infinite;
+
+    ion-icon {
+      font-size: 80px;
+      color: #ef4444;
+    }
+  }
+
+  .empty-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.02em;
+  }
+
+  .empty-text {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+  }
+
+  .action-button {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --border-radius: 14px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
+    --box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+
+    &:hover {
+      --box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+      transform: translateY(-2px);
+    }
+
+    ion-icon {
+      font-size: 22px;
+    }
+  }
+}
+
+// Favorites Container
+.favorites-container {
+  padding: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+// Modern Product Card
+.modern-product-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f3f4f6;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px);
+  }
+
+  .card-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &:hover img {
+      transform: scale(1.1);
+    }
+
+    .image-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+      pointer-events: none;
+    }
+
+    .rating-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: #fbbf24;
+      color: white;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+      z-index: 2;
+
+      ion-icon {
+        font-size: 14px;
+      }
+    }
+
+    .favorite-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      --color: #ef4444;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.9);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border-radius: 50%;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+      ion-icon {
+        font-size: 24px;
+      }
+
+      &.active ion-icon {
+        animation: heartBeat 0.6s ease;
+      }
+    }
+  }
+
+  .card-content {
+    padding: 16px;
+  }
+
+  .category-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    color: #059669;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  .product-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    &:hover {
+      color: #10b981;
+    }
+  }
+
+  .product-details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 12px;
+  }
+
+  .price-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+
+    .price {
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .unit {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+  }
+
+  .stock-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    color: #059669;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+
+    &.low-stock {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      color: #dc2626;
+
+      ion-icon {
+        color: #dc2626;
+      }
+    }
+
+    ion-icon {
+      font-size: 16px;
+      color: #10b981;
+    }
+  }
+
+  .add-to-cart-btn {
+    --background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --color: white;
+    --border-radius: 12px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    --box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 44px;
+
+    &:hover {
+      --box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      transform: translateY(-2px);
+    }
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "tool": "firebase-consistency-check",
+  "timestamp": "2026-03-21T12:33:01.501Z",
+  "status": "pass",
+  "mode": "check",
+  "summary": {
+    "usersDocs": 11,
+    "appStateDocs": 30,
+    "appStateProductsChunkDocs": 1,
+    "warningCount": 0,
+    "criticalCount": 0
+  },
+  "warnings": [],
+  "criticals": []
+}

@@ -1,0 +1,100 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeScanner()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Quét mã truy xuất</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="scanner-container">
+    
+    <!-- Camera Preview Area -->
+    <div class="camera-preview" *ngIf="!scanResult && !showManualInput">
+      <div class="scanner-overlay">
+        <div class="scanner-frame">
+          <div class="corner top-left"></div>
+          <div class="corner top-right"></div>
+          <div class="corner bottom-left"></div>
+          <div class="corner bottom-right"></div>
+          <div class="scanning-line"></div>
+        </div>
+      </div>
+      
+      <!-- Camera Video Element (HTML5) -->
+      <video #videoElement autoplay class="camera-video"></video>
+      
+      <!-- Canvas for processing -->
+      <canvas #canvasElement class="hidden-canvas"></canvas>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions" *ngIf="!scanResult && !showManualInput">
+      <ion-icon name="qr-code-outline" class="instruction-icon"></ion-icon>
+      <h2>Đưa mã QR vào khung hình</h2>
+      <p>Căn chỉnh mã QR trong khung để quét tự động</p>
+    </div>
+
+    <!-- Manual Input Option -->
+    <div class="manual-input-section" *ngIf="showManualInput">
+      <div class="input-card">
+        <ion-icon name="keypad-outline" class="input-icon"></ion-icon>
+        <h3>Nhập mã sản phẩm</h3>
+        <ion-item lines="none" class="input-item">
+          <ion-input
+            [(ngModel)]="manualCode"
+            type="number"
+            placeholder="Nhập mã số sản phẩm"
+            class="manual-code-input">
+          </ion-input>
+        </ion-item>
+        <ion-button expand="block" (click)="processManualCode()" [disabled]="!manualCode" class="submit-button">
+          <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+          Xác nhận
+        </ion-button>
+        <ion-button expand="block" fill="outline" (click)="toggleManualInput()" class="cancel-button">
+          <ion-icon name="arrow-back" slot="start"></ion-icon>
+          Quay lại quét mã
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Scan Result -->
+    <div class="scan-result" *ngIf="scanResult">
+      <div class="result-card">
+        <ion-icon name="checkmark-circle" color="success" class="success-icon"></ion-icon>
+        <h3>Quét mã thành công!</h3>
+        <p>Đang chuyển đến trang truy xuất nguồn gốc...</p>
+        <ion-spinner name="crescent" color="success"></ion-spinner>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" *ngIf="!scanResult">
+      <ion-button expand="block" fill="outline" (click)="toggleManualInput()" class="manual-input-button">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        {{ showManualInput ? 'Quét mã QR' : 'Nhập mã thủ công' }}
+      </ion-button>
+      
+      <ion-button expand="block" fill="clear" (click)="toggleFlashlight()" class="flashlight-button" *ngIf="!showManualInput">
+        <ion-icon [name]="isFlashlightOn ? 'flash' : 'flash-outline'" slot="start"></ion-icon>
+        {{ isFlashlightOn ? 'Tắt đèn flash' : 'Bật đèn flash' }}
+      </ion-button>
+    </div>
+
+    <!-- Demo QR Codes -->
+    <div class="demo-section" *ngIf="showManualInput">
+      <h4>Mã sản phẩm mẫu:</h4>
+      <div class="demo-codes">
+        <ion-chip *ngFor="let id of demoProductIds" (click)="selectDemoCode(id)" color="success">
+          <ion-icon name="cube-outline"></ion-icon>
+          <ion-label>SP-{{ id }}</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

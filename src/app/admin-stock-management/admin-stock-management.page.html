@@ -1,0 +1,78 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Quản lý nhập kho</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="page-shell">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Form điều chỉnh tồn kho (Admin)</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Sản phẩm</ion-label>
+          <ion-select [(ngModel)]="selectedProductId" (ionChange)="onSelectedProductChanged()">
+            <ion-select-option *ngFor="let product of products" [value]="product.id">{{ product.name }} ({{ product.stock }})</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Ngưỡng cảnh báo tồn kho (theo sản phẩm)</ion-label>
+          <ion-input type="number" min="1" [(ngModel)]="lowStockThreshold"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" fill="outline" color="warning" (click)="saveLowStockThreshold()" [disabled]="isSubmitting || selectedProductId === null">
+          Lưu ngưỡng cảnh báo
+        </ion-button>
+
+        <ion-item>
+          <ion-label position="stacked">Hành động</ion-label>
+          <ion-segment [(ngModel)]="actionType">
+            <ion-segment-button value="restock">
+              <ion-label>Nhập hàng</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="manual_adjustment">
+              <ion-label>Điều chỉnh</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Số lượng</ion-label>
+          <ion-input type="number" min="1" [(ngModel)]="quantity"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Ghi chú audit</ion-label>
+          <ion-textarea rows="3" [(ngModel)]="note" placeholder="Ví dụ: Nhập lô hàng ngày 15/03"></ion-textarea>
+        </ion-item>
+
+        <ion-button expand="block" color="success" (click)="submitStockAdjustment()" [disabled]="isSubmitting">
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+          <span *ngIf="!isSubmitting">Cộng tồn kho</span>
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" color="danger" (click)="subtractStock()" [disabled]="isSubmitting">
+          Trừ tồn kho
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="selectedProduct">
+      <ion-card-header>
+        <ion-card-title>Thông tin nhanh</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Sản phẩm:</strong> {{ selectedProduct.name }}</p>
+        <p><strong>Tồn kho hiện tại:</strong> {{ selectedProduct.stock }} {{ selectedProduct.unit }}</p>
+        <p><strong>Ngưỡng cảnh báo:</strong> {{ selectedProduct.inventory?.lowStockThreshold || 5 }}</p>
+        <p><strong>Danh mục:</strong> {{ selectedProduct.category }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

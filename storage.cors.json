@@ -1,0 +1,39 @@
+[
+  {
+    "origin": [
+      "http://localhost:4200",
+      "http://localhost:4201",
+      "http://127.0.0.1:4200",
+      "http://127.0.0.1:4201",
+      "http://localhost:8100",
+      "http://127.0.0.1:8100",
+      "http://localhost:4202",
+      "http://127.0.0.1:4202"
+    ],
+    "method": [
+      "GET",
+      "HEAD",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "x-firebase-storage-version",
+      "x-goog-meta-*",
+      "x-goog-resumable",
+      "x-goog-upload-command",
+      "x-goog-upload-content-type",
+      "x-goog-upload-file-name",
+      "x-goog-upload-header-content-length",
+      "x-goog-upload-header-content-type",
+      "x-goog-upload-offset",
+      "x-goog-upload-protocol",
+      "x-goog-upload-status",
+      "x-goog-upload-url"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

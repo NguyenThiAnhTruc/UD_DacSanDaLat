@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
   <meta charset="utf-8" />
-  <title>Ionic App</title>
+  <title>Nông Sản Đà Lạt - Đặc sản sạch nguồn gốc rõ ràng</title>
 
   <base href="/" />
 
+  <meta name="description" content="Ứng dụng mua bán nông sản Đà Lạt uy tín, sản phẩm sạch, nguồn gốc rõ ràng, giao hàng tận nơi" />
+  <meta name="keywords" content="nông sản đà lạt, rau sạch, trái cây, đặc sản, organic, vietgap" />
+  <meta name="author" content="Nông Sản Đà Lạt" />
   <meta name="color-scheme" content="light dark" />
-  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 
@@ -16,7 +19,61 @@
 
   <!-- add to homescreen for ios -->
   <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Nông Sản Đà Lạt" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  <!-- CRITICAL: Polyfill sessionStorage + localStorage BEFORE any scripts load (for Capacitor WebView mobile support) -->
+  <!-- Firebase Auth needs both for OAuth state management and persistence on mobile -->
+  <script>
+    (function() {
+      // Polyfill sessionStorage
+      try {
+        sessionStorage.setItem('__test__', 'test');
+        sessionStorage.removeItem('__test__');
+        console.log('[Startup] sessionStorage is available');
+      } catch (e) {
+        console.warn('[Startup] sessionStorage not available, creating in-memory polyfill...');
+        var sessionInMemory = {};
+        window.sessionStorage = {
+          getItem: function(key) { return sessionInMemory[key] || null; },
+          setItem: function(key, value) { sessionInMemory[key] = String(value); },
+          removeItem: function(key) { delete sessionInMemory[key]; },
+          clear: function() { sessionInMemory = {}; },
+          key: function(index) {
+            var keys = Object.keys(sessionInMemory);
+            return keys[index] || null;
+          },
+          length: Object.keys(sessionInMemory).length
+        };
+        console.log('[Startup] sessionStorage polyfill applied');
+      }
+      
+      // Ensure localStorage also works
+      try {
+        localStorage.setItem('__test__', 'test');
+        localStorage.removeItem('__test__');
+        console.log('[Startup] localStorage is available');
+      } catch (e) {
+        console.warn('[Startup] localStorage fallback: using in-memory storage');
+        var localInMemory = {};
+        window.localStorage = {
+          getItem: function(key) { return localInMemory[key] || null; },
+          setItem: function(key, value) { localInMemory[key] = String(value); },
+          removeItem: function(key) { delete localInMemory[key]; },
+          clear: function() { localInMemory = {}; },
+          key: function(index) {
+            var keys = Object.keys(localInMemory);
+            return keys[index] || null;
+          },
+          length: Object.keys(localInMemory).length
+        };
+        console.log('[Startup] localStorage polyfill applied');
+      }
+    })();
+  </script>
+  
+  <script src="assets/env.js"></script>
 </head>
 
 <body>

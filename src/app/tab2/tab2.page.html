@@ -1,17 +1,230 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="success">
     <ion-title>
-      Tab 2
+      <ion-icon name="cart-outline"></ion-icon>
+      Giỏ Hàng
     </ion-title>
+    <ion-buttons slot="end" *ngIf="cartItems.length > 0">
+      <ion-button (click)="clearCart()">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
+      <ion-title size="large">Giỏ Hàng</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <!-- Empty Cart State -->
+  <div class="empty-cart" *ngIf="cartItems.length === 0">
+    <ion-icon name="cart-outline" class="empty-icon"></ion-icon>
+    <h2>Giỏ hàng trống</h2>
+    <p>Hãy thêm sản phẩm vào giỏ hàng</p>
+    <ion-button color="success" (click)="continueShopping()">
+      <ion-icon name="storefront-outline" slot="start"></ion-icon>
+      Tiếp tục mua sắm
+    </ion-button>
+  </div>
+
+  <!-- Cart Items -->
+  <div *ngIf="cartItems.length > 0">
+    <ion-list>
+      <ion-item-sliding *ngFor="let item of cartItems">
+        <ion-item lines="none" class="cart-item">
+          <ion-thumbnail slot="start">
+            <img [src]="item.product.image" alt="{{ item.product.name }}" title="{{ item.product.name }}" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';" />
+          </ion-thumbnail>
+          <ion-label>
+            <h2>{{ item.product.name }}</h2>
+            <p class="origin">
+              <ion-icon name="location-outline"></ion-icon>
+              {{ item.product.origin }}
+            </p>
+            <p class="price">{{ item.product.price | number:'1.0-0' }}đ/{{ item.product.unit }}</p>
+          </ion-label>
+          <div class="quantity-controls" slot="end">
+            <ion-button fill="clear" size="small" (click)="decreaseQuantity(item)">
+              <ion-icon name="remove-circle" slot="icon-only"></ion-icon>
+            </ion-button>
+            <span class="quantity">{{ item.quantity }}</span>
+            <ion-button fill="clear" size="small" (click)="increaseQuantity(item)">
+              <ion-icon name="add-circle" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="confirmRemoveItem(item)">
+            <ion-icon name="trash" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <!-- Summary -->
+    <div class="summary-card">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Thông tin đơn hàng</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="summary-row">
+            <span>Số lượng sản phẩm:</span>
+            <strong>{{ cartItems.length }}</strong>
+          </div>
+          <div class="summary-row total">
+            <span>Tổng tiền:</span>
+            <strong class="total-amount">{{ total | number:'1.0-0' }}đ</strong>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Checkout Form -->
+    <div class="checkout-form">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Thông tin giao hàng</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon name="person-outline"></ion-icon>
+              Họ và tên
+            </ion-label>
+            <ion-input 
+              [(ngModel)]="customerName" 
+              placeholder="Nhập họ tên"
+              required>
+            </ion-input>
+          </ion-item>
+          <div class="error-message" *ngIf="nameError">
+            <ion-icon name="alert-circle"></ion-icon>
+            {{ nameError }}
+          </div>
+
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon name="call-outline"></ion-icon>
+              Số điện thoại
+            </ion-label>
+            <ion-input 
+              [(ngModel)]="customerPhone" 
+              type="tel"
+              placeholder="Nhập số điện thoại"
+              required>
+            </ion-input>
+          </ion-item>
+          <div class="error-message" *ngIf="phoneError">
+            <ion-icon name="alert-circle"></ion-icon>
+            {{ phoneError }}
+          </div>
+
+          <ion-item>
+            <ion-label position="floating">
+              <ion-icon name="location-outline"></ion-icon>
+              Địa chỉ giao hàng
+            </ion-label>
+            <ion-textarea 
+              [(ngModel)]="deliveryAddress" 
+              rows="3"
+              placeholder="Nhập địa chỉ"
+              required>
+            </ion-textarea>
+          </ion-item>
+          <div class="error-message" *ngIf="addressError">
+            <ion-icon name="alert-circle"></ion-icon>
+            {{ addressError }}
+          </div>
+
+          <ion-button 
+            expand="block" 
+            color="success" 
+            size="large"
+            class="checkout-btn"
+            (click)="checkout()"
+            [disabled]="isCheckingOut"
+            *ngIf="!showQRPayment">
+            <ion-spinner name="circles" *ngIf="isCheckingOut"></ion-spinner>
+            <ion-icon name="checkmark-circle" slot="start" *ngIf="!isCheckingOut"></ion-icon>
+            <span *ngIf="!isCheckingOut">Đặt hàng - {{ total | number:'1.0-0' }}đ</span>
+            <span *ngIf="isCheckingOut">Đang xử lý...</span>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- QR Payment Section -->
+    <div class="qr-payment-section" *ngIf="showQRPayment">
+      <ion-card class="qr-card">
+        <ion-card-header>
+          <ion-card-title class="qr-title">
+            <ion-icon name="qr-code" color="success"></ion-icon>
+            Quét mã QR để thanh toán
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="qr-container">
+            <img [src]="qrCodeUrl" alt="QR Code Payment" class="qr-image" />
+          </div>
+          
+          <div class="payment-info">
+            <div class="info-row">
+              <ion-icon name="card" color="success"></ion-icon>
+              <div class="info-content">
+                <div class="info-label">Ngân hàng</div>
+                <div class="info-value">MB Bank - Quân đội</div>
+              </div>
+            </div>
+            
+            <div class="info-row">
+              <ion-icon name="person" color="success"></ion-icon>
+              <div class="info-content">
+                <div class="info-label">Chủ tài khoản</div>
+                <div class="info-value">NONG SAN DA LAT</div>
+              </div>
+            </div>
+            
+            <div class="info-row">
+              <ion-icon name="cash" color="success"></ion-icon>
+              <div class="info-content">
+                <div class="info-label">Số tiền</div>
+                <div class="info-value highlight">{{ paymentAmount | number:'1.0-0' }}đ</div>
+              </div>
+            </div>
+          </div>
+
+          <ion-text color="medium" class="payment-note">
+            <p>
+              <ion-icon name="information-circle"></ion-icon>
+              Sử dụng ứng dụng ngân hàng để quét mã QR và thanh toán
+            </p>
+          </ion-text>
+
+          <div class="payment-actions">
+            <ion-button 
+              expand="block" 
+              color="success" 
+              size="large"
+              (click)="confirmPayment()">
+              <ion-icon name="checkmark-done" slot="start"></ion-icon>
+              Tôi đã thanh toán
+            </ion-button>
+            
+            <ion-button 
+              expand="block" 
+              fill="outline"
+              color="medium"
+              (click)="cancelPayment()">
+              <ion-icon name="close" slot="start"></ion-icon>
+              Hủy
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
 </ion-content>

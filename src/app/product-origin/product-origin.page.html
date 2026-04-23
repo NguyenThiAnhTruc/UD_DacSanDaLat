@@ -1,0 +1,356 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button" aria-label="Quay lại màn trước">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="title-content">
+      <span class="title-text">Truy xuất nguồn gốc</span>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent" color="success"></ion-spinner>
+    <p>Đang tải thông tin...</p>
+  </div>
+
+  <!-- Product Origin Content -->
+  <div *ngIf="!isLoading && product" class="origin-content">
+    <!-- Header Section with Product Info -->
+    <div class="product-hero-card">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <div class="product-image-wrapper">
+          <img [src]="product.image" alt="{{ product.name }}" title="{{ product.name }}" class="product-image" onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';">
+          <div class="image-glow"></div>
+        </div>
+        <div class="product-info">
+          <h2 class="product-title">{{ product.name }}</h2>
+          <div class="scanned-badge" *ngIf="cameFromQrScan">
+            <ion-icon name="scan-circle-outline"></ion-icon>
+            <span>Đến từ quét QR</span>
+          </div>
+          <div class="origin-badge">
+            <ion-icon name="location"></ion-icon>
+            <span>{{ product.origin }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Code Section -->
+    <div class="modern-card qr-card">
+      <div class="card-header">
+        <div class="header-icon">
+          <ion-icon name="qr-code-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Mã truy xuất</h3>
+      </div>
+      <div class="qr-content">
+        <div class="qr-display">
+          <img
+            [src]="qrImageUrl"
+            [alt]="'QR truy xuất ' + product.name"
+            class="qr-image"
+            onerror="this.onerror=null;this.src='assets/images/product-placeholder.svg';"
+          >
+        </div>
+        <div class="qr-details">
+          <div class="code-wrapper">
+            <span class="code-label">Mã số</span>
+            <span class="code-value">{{ traceCode }}</span>
+          </div>
+          <p class="qr-hint">
+            <ion-icon name="scan-outline"></ion-icon>
+            Quét mã để xem trên di động
+          </p>
+          <p class="qr-hint">
+            <ion-icon name="code-outline"></ion-icon>
+            Link truy xuất:
+            <a [href]="qrTraceLink" target="_blank" rel="noopener noreferrer">{{ qrTraceLink }}</a>
+          </p>
+          <div class="qr-actions">
+            <ion-button size="small" fill="outline" color="success" (click)="downloadQrPng()" aria-label="Tải mã QR dạng PNG">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Tải PNG
+            </ion-button>
+            <ion-button size="small" fill="outline" color="primary" (click)="shareViaFacebook()" aria-label="Chia sẻ truy xuất sản phẩm lên Facebook">
+              <ion-icon name="logo-facebook" slot="start"></ion-icon>
+              Chia sẻ Facebook
+            </ion-button>
+            <ion-button size="small" fill="outline" color="tertiary" (click)="shareViaZalo()" aria-label="Chia sẻ truy xuất sản phẩm qua Zalo">
+              <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
+              Chia sẻ Zalo
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Farm Information -->
+    <div class="modern-card farm-card">
+      <div class="card-header">
+        <div class="header-icon gradient">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Thông tin trang trại</h3>
+        <ion-button
+          *ngIf="canEditTraceability"
+          size="small"
+          fill="outline"
+          color="success"
+          class="trace-edit-toggle"
+          (click)="toggleTraceabilityInfoEditor()"
+        >
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          {{ showTraceabilityInfoEditor ? 'Đóng chỉnh sửa' : 'Thay đổi thông tin' }}
+        </ion-button>
+      </div>
+      <div class="farm-info-grid">
+        <div class="farm-info-item">
+          <div class="info-icon">
+            <ion-icon name="home-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <span class="info-label">Trang trại</span>
+            <span class="info-value">{{ product.farmName || 'Đang cập nhật' }}</span>
+          </div>
+        </div>
+        <div class="farm-info-item">
+          <div class="info-icon">
+            <ion-icon name="location-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <span class="info-label">Địa chỉ</span>
+            <span class="info-value">{{ product.origin }}</span>
+          </div>
+        </div>
+        <div class="farm-info-item" *ngIf="product.farmerInfo">
+          <div class="info-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <span class="info-label">Người trồng</span>
+            <span class="info-value">{{ product.farmerInfo.name }}</span>
+          </div>
+        </div>
+        <div class="farm-info-item" *ngIf="product.farmerInfo?.experience">
+          <div class="info-icon">
+            <ion-icon name="ribbon-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <span class="info-label">Kinh nghiệm</span>
+            <span class="info-value">{{ product.farmerInfo?.experience }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="traceability-info-editor" *ngIf="canEditTraceability && showTraceabilityInfoEditor">
+        <ion-item>
+          <ion-label position="stacked">Xuất xứ</ion-label>
+          <ion-input [(ngModel)]="traceOriginInput" placeholder="VD: Đà Lạt, Lâm Đồng"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Tên trang trại</ion-label>
+          <ion-input [(ngModel)]="traceFarmNameInput" placeholder="VD: HTX Atiso Đà Lạt"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Người trồng</ion-label>
+          <ion-input [(ngModel)]="traceFarmerNameInput" placeholder="VD: Nguyễn Văn A"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Kinh nghiệm</ion-label>
+          <ion-input [(ngModel)]="traceFarmerExperienceInput" placeholder="VD: 8 năm kinh nghiệm"></ion-input>
+        </ion-item>
+
+        <div class="action-section traceability-info-actions">
+          <ion-button
+            expand="block"
+            color="success"
+            (click)="saveTraceabilityInfo()"
+            [disabled]="isSavingTraceabilityInfo"
+          >
+            <ion-spinner *ngIf="isSavingTraceabilityInfo" name="crescent"></ion-spinner>
+            <ion-icon *ngIf="!isSavingTraceabilityInfo" name="save-outline" slot="start"></ion-icon>
+            <span *ngIf="!isSavingTraceabilityInfo">Lưu thay đổi truy xuất</span>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certification Section -->
+    <div class="modern-card cert-card" *ngIf="product.certification && product.certification.length > 0">
+      <div class="card-header">
+        <div class="header-icon">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Chứng nhận chất lượng</h3>
+      </div>
+      <div class="certification-list">
+        <div class="cert-item" *ngFor="let cert of product.certification">
+          <div class="cert-check">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <span class="cert-name">{{ cert }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Traceability Timeline -->
+    <div class="modern-card timeline-card">
+      <div class="card-header">
+        <div class="header-icon gradient">
+          <ion-icon name="git-network-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Quy trình sản xuất</h3>
+      </div>
+      <div class="modern-timeline">
+        <div class="timeline-item" *ngFor="let stage of traceabilityEvents; let i = index">
+          <div class="timeline-indicator">
+            <div class="indicator-dot">
+              <ion-icon [name]="stage.icon"></ion-icon>
+            </div>
+            <div class="indicator-line" *ngIf="i < traceabilityEvents.length - 1"></div>
+          </div>
+          <div class="timeline-card-content">
+            <h4 class="stage-title">{{ stage.stage }}</h4>
+            <div class="stage-date">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ formatDateTime(stage.occurredAt) }}</span>
+            </div>
+            <p class="stage-description">{{ stage.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modern-card" *ngIf="canEditTraceability">
+      <div class="card-header">
+        <div class="header-icon">
+          <ion-icon name="create-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Bổ sung truy xuất nguồn gốc</h3>
+      </div>
+
+      <ion-item>
+        <ion-label position="stacked">Giai đoạn</ion-label>
+        <ion-input
+          [(ngModel)]="traceStageInput"
+          (ionBlur)="onTraceStageChanged()"
+          placeholder="VD: Sơ chế sau thu hoạch"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Mô tả</ion-label>
+        <ion-textarea
+          [(ngModel)]="traceDescriptionInput"
+          rows="3"
+          maxlength="300"
+          placeholder="Mô tả chi tiết công đoạn truy xuất"
+        ></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Thời điểm diễn ra</ion-label>
+        <ion-input
+          type="datetime-local"
+          [(ngModel)]="traceOccurredAtInput"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Biểu tượng hiển thị</ion-label>
+        <ion-select [(ngModel)]="traceIconInput">
+          <ion-select-option *ngFor="let icon of traceIconOptions" [value]="icon">{{ icon }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <div class="action-section">
+        <ion-button
+          expand="block"
+          color="success"
+          (click)="submitTraceabilityEvent()"
+          [disabled]="isSubmittingTraceability"
+        >
+          <ion-spinner *ngIf="isSubmittingTraceability" name="crescent"></ion-spinner>
+          <ion-icon *ngIf="!isSubmittingTraceability" name="add-circle-outline" slot="start"></ion-icon>
+          <span *ngIf="!isSubmittingTraceability">Thêm sự kiện truy xuất</span>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Nutrition Info -->
+    <div class="modern-card nutrition-card" *ngIf="product.nutritionInfo">
+      <div class="card-header">
+        <div class="header-icon">
+          <ion-icon name="nutrition-outline"></ion-icon>
+        </div>
+        <h3 class="card-title">Thông tin dinh dưỡng</h3>
+      </div>
+      <div class="nutrition-stats">
+        <div class="nutrition-stat" *ngIf="product.nutritionInfo.calories">
+          <div class="stat-icon">
+            <ion-icon name="flame-outline"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ product.nutritionInfo.calories }}</span>
+            <span class="stat-label">Calories</span>
+          </div>
+        </div>
+        <div class="nutrition-stat" *ngIf="product.nutritionInfo.protein">
+          <div class="stat-icon">
+            <ion-icon name="barbell-outline"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ product.nutritionInfo.protein }}</span>
+            <span class="stat-label">Protein</span>
+          </div>
+        </div>
+        <div class="nutrition-stat" *ngIf="product.nutritionInfo.carbs">
+          <div class="stat-icon">
+            <ion-icon name="pizza-outline"></ion-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ product.nutritionInfo.carbs }}</span>
+            <span class="stat-label">Carbs</span>
+          </div>
+        </div>
+      </div>
+      <div class="vitamins-section" *ngIf="product.nutritionInfo.vitamins && product.nutritionInfo.vitamins.length > 0">
+        <h5 class="vitamins-title">
+          <ion-icon name="leaf-outline"></ion-icon>
+          Vitamin & Khoáng chất
+        </h5>
+        <div class="vitamin-tags">
+          <div class="vitamin-tag" *ngFor="let vitamin of product.nutritionInfo.vitamins">
+            <ion-icon name="checkmark"></ion-icon>
+            <span>{{ vitamin }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <div class="action-section">
+      <ion-button expand="block" class="action-button" (click)="viewProductDetail()">
+        <ion-icon name="eye-outline" slot="start"></ion-icon>
+        Xem chi tiết sản phẩm
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- No Product Found -->
+  <div *ngIf="!isLoading && !product" class="no-product">
+    <ion-icon name="alert-circle-outline" color="warning"></ion-icon>
+    <h3>Không tìm thấy thông tin sản phẩm</h3>
+    <ion-button (click)="goBack()">Quay lại</ion-button>
+  </div>
+</ion-content>

@@ -1,0 +1,103 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return signedIn() &&
+        (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role_id == 'admin'
+        );
+    }
+
+    function isSellerOrAdmin() {
+      return signedIn() &&
+        (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'seller' ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role_id == 'seller' ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role_id == 'admin'
+        );
+    }
+
+    // User profile: each user can create their own profile when authenticated
+    match /users/{userId} {
+      // Allow self-creation for newly registered users
+      allow create: if isOwner(userId)
+        && request.resource.data.id == userId
+        && (!('role' in request.resource.data) || request.resource.data.role == 'customer')
+        && (!('role_id' in request.resource.data) || request.resource.data.role_id == 'customer');
+
+      allow read: if isOwner(userId) || isAdmin();
+
+      // Owners can update their own profile but cannot self-escalate role.
+      allow update: if isOwner(userId)
+        && request.resource.data.id == userId
+        && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role)
+        && (!('role_id' in request.resource.data) || request.resource.data.role_id == resource.data.role_id);
+
+      // Optional admin override for moderation/support.
+      allow update, delete: if isAdmin();
+
+      // Users can only delete their own profile.
+      allow delete: if isOwner(userId);
+    }
+
+    // App state documents are namespaced by uid:
+    // favorites_user_<uid>, cart_user_<uid>, orders_user_<uid>
+    match /app_state/{docId} {
+      // Public product catalog readable by anyone (including guests & unauthenticated users)
+      allow read: if docId == 'products' || docId == 'products_meta_v2';
+      
+      // Authenticated users can read their scoped data
+      allow read: if signedIn() && (
+        docId == ('favorites_user_' + request.auth.uid) ||
+        docId == ('cart_user_' + request.auth.uid) ||
+        docId == ('orders_user_' + request.auth.uid) ||
+        docId == 'global_orders' ||
+        docId == 'legacyMigrationDoneV1'
+      );
+
+      // Users can only write to their own state documents
+      allow write: if signedIn() && (
+        docId == ('favorites_user_' + request.auth.uid) ||
+        docId == ('cart_user_' + request.auth.uid) ||
+        docId == ('orders_user_' + request.auth.uid)
+      );
+
+      // Product catalogs are editable by seller/admin roles only
+      allow write: if isSellerOrAdmin() && (
+        docId == 'products' ||
+        docId == 'products_meta_v2'
+      );
+
+      // Global order aggregation is writable by authenticated users for checkout
+      allow write: if signedIn() && docId == 'global_orders';
+
+      // Migration markers are restricted to admins
+      allow write: if isAdmin() && docId == 'legacyMigrationDoneV1';
+
+      // Moderation reads for seller/admin over user-scoped order docs
+      allow read: if isSellerOrAdmin() && docId.matches('orders_user_.*');
+    }
+
+    // Product chunks - public read
+    match /app_state_products/{chunkId} {
+      allow read: if true;  // Public read - product chunks are public
+      allow write: if signedIn();
+    }
+
+    // Deny all other documents by default, but allow authenticated users to read (fallback)
+    match /{document=**} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+  }
+}

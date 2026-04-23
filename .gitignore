@@ -40,6 +40,8 @@ android/local.properties
 
 # Packaged archives and local exports
 *.zip
+DEBUG_LOGIN.js
+test-output.txt
 
 # IDEs and editors
 .idea/

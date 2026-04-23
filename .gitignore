@@ -35,15 +35,26 @@ log.txt
 npm-debug.log
 yarn-error.log
 
+# Python, PHP, and local dependency folders
+venv/
+.env
+.env/
+__pycache__/
+vendor/
+
 # Android local configuration
 android/local.properties
 
 # Packaged archives and local exports
 *.zip
+*.exe
+*.dll
+*.so
 DEBUG_LOGIN.js
 test-output.txt
 
 # IDEs and editors
+.vscode/
 .idea/
 .project
 .classpath
@@ -52,16 +63,9 @@ test-output.txt
 .settings/
 *.sublime-project
 *.sublime-workspace
-
-# Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 .history/*
 src/assets/env.js
-.env
+
 
 
 # Miscellaneous
@@ -72,6 +76,11 @@ src/assets/env.js
 /.nx/cache
 /connect.lock
 /coverage
+/dist/
+/build/
+/out/
+/bin/
+/obj/
 /libpeerconnection.log
 testem.log
 /typings

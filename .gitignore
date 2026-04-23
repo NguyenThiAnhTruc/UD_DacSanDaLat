@@ -55,6 +55,7 @@ DEBUG_LOGIN.js
 test-output.txt
 DEMO_ACCOUNTS.md
 reports/
+FIRESTORE_RULES.best-practice.txt
 
 # IDEs and editors
 .vscode/

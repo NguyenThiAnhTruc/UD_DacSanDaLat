@@ -19,6 +19,7 @@ log.txt
 
 # Ionic
 /.ionic
+/.firebase
 /www
 /platforms
 /plugins
@@ -33,6 +34,12 @@ log.txt
 /node_modules
 npm-debug.log
 yarn-error.log
+
+# Android local configuration
+android/local.properties
+
+# Packaged archives and local exports
+*.zip
 
 # IDEs and editors
 .idea/

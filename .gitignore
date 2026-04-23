@@ -50,8 +50,11 @@ android/local.properties
 *.exe
 *.dll
 *.so
+*.md
 DEBUG_LOGIN.js
 test-output.txt
+DEMO_ACCOUNTS.md
+reports/
 
 # IDEs and editors
 .vscode/

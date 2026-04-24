@@ -79,7 +79,6 @@ src/assets/env.js
 /.nx
 /.nx/cache
 /connect.lock
-/coverage
 /dist/
 /build/
 /out/
